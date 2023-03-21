@@ -1,38 +1,20 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
-
-const Person = ({name, number}) => {
-  return <>{name} {number}<br/></>
-}
-
-const Filter = ({searchPhrase, handleSearchChange}) => {
-  return <><form>filter shown with <input value={searchPhrase} onChange={handleSearchChange}/></form></>
-}
-
-const AddPerson = ({addPerson, newName, handleNameChange, newNumber, handleNumberChange}) => {
-  return <><form onSubmit={addPerson}>
-      <div>
-        name: <input value={newName} onChange={handleNameChange}/><br/>
-        number: <input value={newNumber} onChange={handleNumberChange}/>
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form></>
-}
+import personService from './services/persons'
+import Filter from './components/Filter'
+import Person from './components/Person'
+import NewPerson from './components/NewPerson'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [searchPhrase, setSearchPhrase] = useState('')
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -48,34 +30,31 @@ const App = () => {
     setSearchPhrase(event.target.value)
   }
 
-  const resultsToShow = persons.filter(person => person.name.toLowerCase().includes(searchPhrase.toLowerCase()))
-
   const addPerson = (event) => {
     event.preventDefault()
-    if (persons.map(person => person.name).includes(newName)) {
-      alert(`${newName} is already added to the phonebook`)
-      setNewName('')
-      return
-    }
-    const personObject = {
-      name: newName,
-      number: newNumber
-    }
-    axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
+      if (persons.map(person => person.name).includes(newName)) {
+        alert(`${newName} is already added to the phonebook`)
         setNewName('')
-        setNewNumber('')
-      })
+        return
+      }
+      const personObject = {name: newName, number: newNumber}
+      personService
+        .create(personObject)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          setNewName('')
+          setNewNumber('')
+        })
   }
+
+  const resultsToShow = persons.filter(person => person.name.toLowerCase().includes(searchPhrase.toLowerCase()))
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter searchPhrase={searchPhrase} handleSearchChange={handleSearchChange}/>
       <h2>add a new</h2>
-      <AddPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
+      <NewPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
       {resultsToShow.map(person => <Person key={person.id} name={person.name} number={person.number}/>)}
     </div>
