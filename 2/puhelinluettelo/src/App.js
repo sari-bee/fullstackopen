@@ -3,6 +3,7 @@ import personService from './services/persons'
 import Filter from './components/Filter'
 import Person from './components/Person'
 import NewPerson from './components/NewPerson'
+import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -47,6 +48,14 @@ const App = () => {
         })
   }
 
+  const deleteToggleFor = id => {
+    if (window.confirm(`Delete ${persons.find(person => person.id === id).name}?`)) {
+      axios.delete(`http://localhost:3001/persons/${id}`).then(response => {
+        personService.getAll()
+        .then(p => {setPersons(p)})})
+    }
+  }
+
   const resultsToShow = persons.filter(person => person.name.toLowerCase().includes(searchPhrase.toLowerCase()))
 
   return (
@@ -56,7 +65,7 @@ const App = () => {
       <h2>add a new</h2>
       <NewPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      {resultsToShow.map(person => <Person key={person.id} name={person.name} number={person.number}/>)}
+      {resultsToShow.map(person => <Person key={person.id} name={person.name} number={person.number} deleteToggle={() => deleteToggleFor(person.id)}/>)}
     </div>
   )
 }
