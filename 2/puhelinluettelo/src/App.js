@@ -50,8 +50,8 @@ const App = () => {
   const deleteToggleFor = id => {
     if (window.confirm(`Delete ${persons.find(person => person.id === id).name}?`)) {
       personService.deleteOne(id)
-      .then(personService.getAll()
-      .then(p => {setPersons(p)}))
+        .then(response =>{personService.getAll()
+          .then(p => setPersons(p))})
     }
   }
 
