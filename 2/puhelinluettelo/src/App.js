@@ -3,7 +3,6 @@ import personService from './services/persons'
 import Filter from './components/Filter'
 import Person from './components/Person'
 import NewPerson from './components/NewPerson'
-import axios from 'axios'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -50,9 +49,9 @@ const App = () => {
 
   const deleteToggleFor = id => {
     if (window.confirm(`Delete ${persons.find(person => person.id === id).name}?`)) {
-      axios.delete(`http://localhost:3001/persons/${id}`).then(response => {
-        personService.getAll()
-        .then(p => {setPersons(p)})})
+      personService.deleteOne(id)
+      .then(personService.getAll()
+      .then(p => {setPersons(p)}))
     }
   }
 
