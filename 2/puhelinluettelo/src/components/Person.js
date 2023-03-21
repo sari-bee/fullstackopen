@@ -1,7 +1,7 @@
-const Person = ({name, number, deleteToggle}) => {
+const Person = ({name, number, deleteItem}) => {
   return (
     <>
-    {name} {number} <button onClick={deleteToggle}>Delete</button><br/>
+    {name} {number} <button onClick={deleteItem}>Delete</button><br/>
     </>
   )
 }

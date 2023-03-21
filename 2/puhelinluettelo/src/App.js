@@ -33,8 +33,8 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
       if (persons.map(person => person.name).includes(newName)) {
-        alert(`${newName} is already added to the phonebook`)
-        setNewName('')
+        const person_id = persons.find(person => person.name === newName).id
+        changeNumberFor(person_id)
         return
       }
       const personObject = {name: newName, number: newNumber}
@@ -47,12 +47,25 @@ const App = () => {
         })
   }
 
-  const deleteToggleFor = id => {
+  const deleteItemFor = id => {
     if (window.confirm(`Delete ${persons.find(person => person.id === id).name}?`)) {
       personService.deleteOne(id)
         .then(response =>{personService.getAll()
           .then(p => setPersons(p))})
     }
+  }
+  
+  const changeNumberFor = id => {
+    if (window.confirm(`${persons.find(person => person.id === id).name} is already added to
+    the phonebook, replace the old number with a new one?`)) {
+      const person = persons.find(p => p.id === id)
+      const changedPerson = { ...person, number: newNumber }
+      personService.changeNumber(id, changedPerson).then(returnedPerson => {
+        setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+      })
+    }
+    setNewName('')
+    setNewNumber('')
   }
 
   const resultsToShow = persons.filter(person => person.name.toLowerCase().includes(searchPhrase.toLowerCase()))
@@ -64,7 +77,7 @@ const App = () => {
       <h2>add a new</h2>
       <NewPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      {resultsToShow.map(person => <Person key={person.id} name={person.name} number={person.number} deleteToggle={() => deleteToggleFor(person.id)}/>)}
+      {resultsToShow.map(person => <Person key={person.id} name={person.name} number={person.number} deleteItem={() => deleteItemFor(person.id)}/>)}
     </div>
   )
 }
