@@ -59,7 +59,8 @@ const App = () => {
     }
     const personObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: (persons.length+1)
     }
     setPersons(persons.concat(personObject))
     setNewName('')
@@ -73,7 +74,7 @@ const App = () => {
       <h2>add a new</h2>
       <AddPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
       <h2>Numbers</h2>
-      {resultsToShow.map(person => <Person key={person.name} name={person.name} number={person.number}/>)}
+      {resultsToShow.map(person => <Person key={person.id} name={person.name} number={person.number}/>)}
     </div>
   )
 }
