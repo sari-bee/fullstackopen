@@ -4,6 +4,7 @@ import Filter from './components/Filter'
 import Person from './components/Person'
 import NewPerson from './components/NewPerson'
 import Notification from './components/Notification'
+import Error from './components/Error'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -11,6 +12,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [searchPhrase, setSearchPhrase] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -37,6 +39,11 @@ const App = () => {
     setTimeout(() => {setNotificationMessage(null)}, 5000)  
   }
 
+  const handleErrorMessageChange = (message) => {
+    setErrorMessage(message)
+    setTimeout(() => {setErrorMessage(null)}, 5000)  
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
       if (persons.map(person => person.name).includes(newName)) {
@@ -60,8 +67,12 @@ const App = () => {
       const name = persons.find(person => person.id === id).name
       personService.deleteOne(id)
         .then(response =>{personService.getAll()
-          .then(p => setPersons(p))})
-      handleNotificationMessageChange(`${name} deleted`)
+          .then(p => setPersons(p))
+          handleNotificationMessageChange(`${name} deleted`)
+        }).catch(error => {
+          handleErrorMessageChange(`Information of ${name} has already been removed from server`)
+          setPersons(persons.filter(p => p.id !== id))
+        })
     }
   }
   
@@ -72,6 +83,9 @@ const App = () => {
       personService.changeNumber(id, changedPerson).then(returnedPerson => {
         setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
       handleNotificationMessageChange(`Number changed for ${person.name}`)
+      }).catch(error => {
+        handleErrorMessageChange(`Information of ${person.name} has already been removed from server`)
+        setPersons(persons.filter(p => p.id !== id))
       })
     }
     setNewName('')
@@ -84,6 +98,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification message={notificationMessage}/>
+      <Error message={errorMessage}/>
       <Filter searchPhrase={searchPhrase} handleSearchChange={handleSearchChange}/>
       <h2>add a new</h2>
       <NewPerson addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange}/>
