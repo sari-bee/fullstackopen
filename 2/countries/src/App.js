@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import Country from './components/Country'
 
 const App = () => {
   const [countries, setCountries] = useState([])
@@ -15,13 +16,7 @@ const App = () => {
     )
   }, [])
 
-  const handleClick = (event) => {
-    event.preventDefault()
-    setValue(event.target.value)
-  }
-
   const handleSearch = (event) => {
-    event.preventDefault()
     setValue(event.target.value)
   }
 
@@ -35,7 +30,8 @@ const App = () => {
     )
   }
 
-  const nameToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.name)
+  const countriesFiltered = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase()))
+  const nameToShow = countriesFiltered.map(c => c.name)
 
   if (nameToShow.length === 0) {
     return (
@@ -65,33 +61,20 @@ const App = () => {
         <form>
         find countries <input value={value} onChange={handleSearch} />
         </form>
-        {nameToShow.map(name => <p key={name}>{name} <button value={name} onClick={handleClick}>Show</button></p>)}
+        {nameToShow.map(name => <p key={name}>{name} <button value={name} onClick={handleSearch}>Show</button></p>)}
       </div>
     )
   }
-
-  const capitalToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.capital)
-  const capitalsBrokenDown = Object.keys(capitalToShow[0]).map(key => capitalToShow[0][key] + " ")
-  const areaToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.area)
-  const languagesToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.languages)
-  const languagesBrokenDown = Object.keys(languagesToShow[0]).map(key => <li key={key}>{languagesToShow[0][key]}</li>)
-  const flagToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.flags)
 
   return (
     <div>
       <form>
       find countries <input value={value} onChange={handleSearch} />
       </form>
-      <h2>{nameToShow}</h2>
-      <p>capital {capitalsBrokenDown}<br/>
-      area {areaToShow}</p>
-      <b>languages:</b>
-      <ul>
-      {languagesBrokenDown}
-      </ul>
-      <img src={flagToShow}></img>
+      <Country countriesFiltered={countriesFiltered}/>
     </div>
   )
+
 }
 
 export default App
