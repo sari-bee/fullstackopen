@@ -15,7 +15,8 @@ const App = () => {
     )
   }, [])
 
-  const handleChange = (event) => {
+  const handleClick = (event) => {
+    event.preventDefault()
     setValue(event.target.value)
   }
 
@@ -40,7 +41,7 @@ const App = () => {
     return (
       <div>
         <form>
-          country: <input value={value} onChange={handleSearch} />
+        find countries <input value={value} onChange={handleSearch} />
         </form>
         <p>No matches</p>
       </div>
@@ -64,7 +65,7 @@ const App = () => {
         <form>
         find countries <input value={value} onChange={handleSearch} />
         </form>
-        {nameToShow.map(name => <p key={name}>{name}</p>)}
+        {nameToShow.map(name => <p key={name}>{name} <button value={name} onClick={handleClick}>Show</button></p>)}
       </div>
     )
   }
