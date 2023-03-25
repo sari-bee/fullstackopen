@@ -28,26 +28,30 @@ const App = () => {
     return (
       <div>
         <form>
-          country: <input value={value} onChange={handleSearch} />
+          find countries <input value={value} onChange={handleSearch} />
         </form>
       </div>
     )
   }
 
   const nameToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.name)
-  const capitalToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.capital)
-  const areaToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.area)
-  const languagesToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.languages)
-  const languagesBrokenDown = Object.keys(languagesToShow[0]).map(key => <li key={key}>{languagesToShow[0][key]}</li>)
-  const flagToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.flags)
 
-  console.log(nameToShow)
+  if (nameToShow.length === 0) {
+    return (
+      <div>
+        <form>
+          country: <input value={value} onChange={handleSearch} />
+        </form>
+        <p>No matches</p>
+      </div>
+    )
+  }
 
   if (nameToShow.length > 10) {
     return (
       <div>
         <form>
-          country: <input value={value} onChange={handleSearch} />
+        find countries <input value={value} onChange={handleSearch} />
         </form>
         <p>Too many matches, specify another filter</p>
       </div>
@@ -58,20 +62,27 @@ const App = () => {
     return (
       <div>
         <form>
-          country: <input value={value} onChange={handleSearch} />
+        find countries <input value={value} onChange={handleSearch} />
         </form>
-        <p>{nameToShow.map(name => <p>{name}</p>)}</p>
+        {nameToShow.map(name => <p key={name}>{name}</p>)}
       </div>
     )
   }
 
+  const capitalToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.capital)
+  const capitalsBrokenDown = Object.keys(capitalToShow[0]).map(key => capitalToShow[0][key] + " ")
+  const areaToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.area)
+  const languagesToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.languages)
+  const languagesBrokenDown = Object.keys(languagesToShow[0]).map(key => <li key={key}>{languagesToShow[0][key]}</li>)
+  const flagToShow = countries.filter(c => c.name.toLowerCase().includes(value.toLowerCase())).map(c => c.flags)
+
   return (
     <div>
       <form>
-        country: <input value={value} onChange={handleSearch} />
+      find countries <input value={value} onChange={handleSearch} />
       </form>
       <h2>{nameToShow}</h2>
-      <p>capital {capitalToShow}<br/>
+      <p>capital {capitalsBrokenDown}<br/>
       area {areaToShow}</p>
       <b>languages:</b>
       <ul>
