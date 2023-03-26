@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import Country from './components/Country'
+import Weather from './components/Weather'
 
 const App = () => {
   const [countries, setCountries] = useState([])
   const [value, setValue] = useState('')
-  const [weathericon, setWeatherIcon] = useState('')
+  const [weathericon, setWeatherIcon] = useState('01d')
   const [weatherdesc, setWeatherDesc] = useState('')
   const [temperature, setTemperature] = useState('')
   const [wind, setWind] = useState('')
@@ -22,6 +23,21 @@ const App = () => {
 
   const handleSearch = (event) => {
     setValue(event.target.value)
+  }
+
+  const searchWeather = (event) => {
+    event.preventDefault()
+    const lat = countriesFiltered.map(c => c.capitalInfo[0])
+    const lon = countriesFiltered.map(c => c.capitalInfo[1])
+    const api_key = process.env.REACT_APP_API_KEY
+    axios
+    .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${api_key}`)
+    .then(response => { 
+      setTemperature(response.data.current.temp)
+      setWind(response.data.current.wind_speed)
+      setWeatherIcon(response.data.current.weather[0].icon)
+      setWeatherDesc(response.data.current.weather[0].description)
+    })
   }
 
   if (value === '') {
@@ -70,35 +86,15 @@ const App = () => {
     )
   }
 
-  const searchWeather = (event) => {
-    event.preventDefault()
-    const lat = countriesFiltered.map(c => c.capitalInfo[0])
-    const lon = countriesFiltered.map(c => c.capitalInfo[1])
-    const api_key = process.env.REACT_APP_API_KEY
-    axios
-    .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${api_key}`)
-    .then(response => {
-      setTemperature(response.data.current.temp)
-      setWind(response.data.current.wind_speed)
-      setWeatherIcon(response.data.current.weather[0].icon)
-      setWeatherDesc(response.data.current.weather[0].description)
-    })
-  }
-
   return (
-    <div>
+    <div onLoad={searchWeather}>
       <form>
       find countries <input value={value} onChange={handleSearch} />
       </form>
       <Country countriesFiltered={countriesFiltered}/>
-      <button onClick={searchWeather}>Weather</button>
-      <h3>Weather in {countriesFiltered.map(c => c.capital + " ")}</h3>
-      <p>temperature {temperature} Celsius</p>
-      <img src={`https://openweathermap.org/img/wn/${weathericon}@2x.png`} title={weatherdesc} alt={weatherdesc}></img>
-      <p>wind {wind} m/s</p>
+      <Weather countriesFiltered={countriesFiltered} temperature={temperature} wind={wind} weathericon={weathericon} weatherdesc={weatherdesc}/>
     </div>
   )
-
 }
 
 export default App
