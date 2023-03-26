@@ -5,13 +5,17 @@ import Country from './components/Country'
 const App = () => {
   const [countries, setCountries] = useState([])
   const [value, setValue] = useState('')
+  const [weathericon, setWeatherIcon] = useState('')
+  const [weatherdesc, setWeatherDesc] = useState('')
+  const [temperature, setTemperature] = useState('')
+  const [wind, setWind] = useState('')
 
   useEffect(() => {
     axios
       .get('https://restcountries.com/v3.1/all')
       .then(response => setCountries((response.data.map(({
-        name, capital, area, languages, flags}) => ({
-        name : name.common, capital, area, languages, flags : flags.png})))
+        name, capital, area, languages, flags, flagsalt, capitalInfo}) => ({
+        name : name.common, capital, area, languages, flags : flags.png, flagsalt : flags.alt, capitalInfo : capitalInfo.latlng})))
       )
     )
   }, [])
@@ -66,12 +70,32 @@ const App = () => {
     )
   }
 
+  const searchWeather = (event) => {
+    event.preventDefault()
+    const lat = countriesFiltered.map(c => c.capitalInfo[0])
+    const lon = countriesFiltered.map(c => c.capitalInfo[1])
+    const api_key = process.env.REACT_APP_API_KEY
+    axios
+    .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&units=metric&appid=${api_key}`)
+    .then(response => {
+      setTemperature(response.data.current.temp)
+      setWind(response.data.current.wind_speed)
+      setWeatherIcon(response.data.current.weather[0].icon)
+      setWeatherDesc(response.data.current.weather[0].description)
+    })
+  }
+
   return (
     <div>
       <form>
       find countries <input value={value} onChange={handleSearch} />
       </form>
       <Country countriesFiltered={countriesFiltered}/>
+      <button onClick={searchWeather}>Weather</button>
+      <h3>Weather in {countriesFiltered.map(c => c.capital + " ")}</h3>
+      <p>temperature {temperature} Celsius</p>
+      <img src={`https://openweathermap.org/img/wn/${weathericon}@2x.png`} title={weatherdesc} alt={weatherdesc}></img>
+      <p>wind {wind} m/s</p>
     </div>
   )
 
