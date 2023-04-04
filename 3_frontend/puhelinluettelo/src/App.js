@@ -60,7 +60,7 @@ const App = () => {
           setNewNumber('')
           handleNotificationMessageChange(`${newName} added successfully`)
         }).catch(error => {
-          handleErrorMessageChange(`Problem adding new person. Is name or number missing?`)
+          handleErrorMessageChange(error.response.data.error)
         })
   }
 
@@ -86,8 +86,7 @@ const App = () => {
         setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
       handleNotificationMessageChange(`Number changed for ${person.name}`)
       }).catch(error => {
-        handleErrorMessageChange(`Information of ${person.name} has already been removed from server`)
-        setPersons(persons.filter(p => p.id !== id))
+        handleErrorMessageChange(error.response.data.error)
       })
     }
     setNewName('')
