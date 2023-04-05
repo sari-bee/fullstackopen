@@ -1,5 +1,3 @@
-const { blockStatement } = require("@babel/types")
-
 const dummy = (blogs) => {
     return 1
 }
