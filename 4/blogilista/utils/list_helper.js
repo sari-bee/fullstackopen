@@ -1,3 +1,5 @@
+const { blockStatement } = require("@babel/types")
+
 const dummy = (blogs) => {
     return 1
 }
@@ -13,7 +15,23 @@ const totalLikes = (blogs) => {
         return likes.reduce(reducer, 0)
     }
 }
+
+const favoriteBlog = (blogs) => {
+    blogs.sort((a, b) => {
+        return b.likes - a.likes
+    })
+    if (blogs.length === 0) {
+        return null
+    } else {
+        const blog = {
+            "title":blogs[0].title,
+            "author":blogs[0].author,
+            "likes":blogs[0].likes
+        }
+        return blog
+    }
+}
   
 module.exports = {
-    dummy, totalLikes
+    dummy, totalLikes, favoriteBlog
 }
