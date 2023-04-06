@@ -1,5 +1,4 @@
 const lodash = require('lodash')
-const { sort } = require('methods')
 
 const dummy = (blogs) => {
     return 1
