@@ -1,9 +1,7 @@
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-
 const api = supertest(app)
-
 const Blog = require('../models/blog')
 
 const initialBlogs = [
@@ -44,7 +42,7 @@ test('blogs returned as json', async () => {
         .expect('Content-Type', /application\/json/)
 })
 
-test('there are right amount of blogs', async () => {
+test('there is the right amount of blogs', async () => {
     const response = await api.get('/api/blogs')
     expect(response.body).toHaveLength(initialBlogs.length)
 })
