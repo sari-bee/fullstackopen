@@ -28,9 +28,15 @@ const blogToAdd = new Blog({
     likes: 9,
 })
 
+const blogWithoutLikes = new Blog({
+    title: "First class tests 2",
+    author: "Robert C. Martin",
+    url: "http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll",
+})
+
 const blogsInDatabase = async () => {
     const blogs = await Blog.find({})
     return blogs.map(blog => blog.toJSON())
 }
 
-module.exports = { initialBlogs, blogToAdd, blogsInDatabase }
+module.exports = { initialBlogs, blogToAdd, blogWithoutLikes, blogsInDatabase }

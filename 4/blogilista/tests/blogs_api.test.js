@@ -38,6 +38,13 @@ test('when posting the amount of blogs grows by one', async () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
 })
 
+test('the default value for likes is zero', async () => {
+    await Blog.deleteMany({})
+    await helper.blogWithoutLikes.save()
+    const blogsAtEnd = await helper.blogsInDatabase()
+    expect(blogsAtEnd[0].likes).toEqual(0)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
