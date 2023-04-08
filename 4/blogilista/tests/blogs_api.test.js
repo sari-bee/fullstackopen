@@ -52,6 +52,18 @@ test('there is a field called id', async () => {
     expect(response.body[0].id).toBeDefined()
 })
 
+test('when posting the amount of blogs grows by one', async () => {
+    blogObject = new Blog({
+        title: "React patterns 2",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 9,
+    })
+    await blogObject.save()
+    const response = await api.get('/api/blogs')
+    expect(response.body).toHaveLength(initialBlogs.length + 1)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
