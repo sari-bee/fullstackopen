@@ -8,6 +8,16 @@ const requestLogger = (request, response, next) => {
     next()
 }
 
+const tokenExtractor = (request, response, next) => {
+    const authorization = request.get('authorization')
+    if (authorization && authorization.startsWith('Bearer ')) {
+        request.token = authorization.replace('Bearer ', '')
+    } else {
+        request.token = authorization
+    }
+    next()
+}
+
 const errorHandler = (error, request, response, next) => {
     logger.error(error.message)
 
@@ -19,4 +29,4 @@ const errorHandler = (error, request, response, next) => {
     next(error)
 }
 
-module.exports = { requestLogger, errorHandler }
+module.exports = { requestLogger, errorHandler, tokenExtractor }
