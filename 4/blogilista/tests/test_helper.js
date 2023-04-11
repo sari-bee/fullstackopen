@@ -22,6 +22,11 @@ const initialBlogs = [
       }
 ]
 
+const loggedInUser = {
+  username: "keijo",
+  password: "keijonsalasana"
+}
+
 const blogToAdd = {
   title: "React patterns 2",
   author: "Michael Chan",
@@ -63,6 +68,7 @@ module.exports = {
     blogWithoutLikes,
     blogWithoutTitle,
     blogWithoutURL,
+    loggedInUser,
     blogsInDatabase,
     usersInDatabase
 }

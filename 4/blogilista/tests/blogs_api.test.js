@@ -31,34 +31,45 @@ describe('for initial blogs', () => {
 
 describe('when posting a new entry', () => {
     test('the amount of blogs grows by one', async () => {
-        await api.post('/api/blogs').send(helper.blogToAdd)
+        const loggedIn = await api.post('/api/login').send(helper.loggedInUser)
+        await api.post('/api/blogs').send(helper.blogToAdd).set('Authorization', `Bearer ${loggedIn.body.token}`)
         const blogsAtEnd = await helper.blogsInDatabase()
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
     })
     
     test('the default value for likes is zero', async () => {
         await Blog.deleteMany({})
-        await api.post('/api/blogs').send(helper.blogWithoutLikes)
+        const loggedIn = await api.post('/api/login').send(helper.loggedInUser)
+        await api.post('/api/blogs').send(helper.blogWithoutLikes).set('Authorization', `Bearer ${loggedIn.body.token}`)
         const blogsAtEnd = await helper.blogsInDatabase()
         expect(blogsAtEnd[0].likes).toEqual(0)
     })
     
     test('the response to missing title is 400', async () => {
-        await api.post('/api/blogs').send(helper.blogWithoutTitle).expect(400)
+        const loggedIn = await api.post('/api/login').send(helper.loggedInUser)
+        await api.post('/api/blogs').send(helper.blogWithoutTitle).set('Authorization', `Bearer ${loggedIn.body.token}`).expect(400)
     })
     
     test('the response to missing url is 400', async () => {
-        await api.post('/api/blogs').send(helper.blogWithoutURL).expect(400)
+        const loggedIn = await api.post('/api/login').send(helper.loggedInUser)
+        await api.post('/api/blogs').send(helper.blogWithoutURL).set('Authorization', `Bearer ${loggedIn.body.token}`).expect(400)
+    })
+
+    test('the response to missing token is 401', async () => {
+        await api.post('/api/blogs').send(helper.blogToAdd).expect(401)
     })
 })
 
 describe('deleting an entry', () => {
     test('returns code 204 and number of blogs is reduced', async () => {
+        await Blog.deleteMany({})
+        const loggedIn = await api.post('/api/login').send(helper.loggedInUser)
+        await api.post('/api/blogs').send(helper.blogToAdd).set('Authorization', `Bearer ${loggedIn.body.token}`)
         const blogsAtStart = await helper.blogsInDatabase()
         const blogToDelete = blogsAtStart[0]
-        await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204)
+        await api.delete(`/api/blogs/${blogToDelete.id}`).set('Authorization', `Bearer ${loggedIn.body.token}`).expect(204)
         const blogsAtEnd = await helper.blogsInDatabase()
-        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length-1)
+        expect(blogsAtEnd).toHaveLength(blogsAtStart.length-1)
     })
 })
 
