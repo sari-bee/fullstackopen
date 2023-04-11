@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import loginService from './services/login'
 import blogService from './services/blogs'
+import Notification from './components/Notification'
+import Error from './components/Error'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,9 +17,7 @@ const App = () => {
   const [notification, setNotification] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+    blogService.getAll().then(response => {setBlogs(response)})  
   }, [])
 
   useEffect(() => {
@@ -25,6 +25,7 @@ const App = () => {
     if (alreadyLoggedUser) {
       const user = JSON.parse(alreadyLoggedUser)
       setUser(user)
+      blogService.setToken(user.token)
     }
   }, [])
 
@@ -37,8 +38,10 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      setNotification('login successful')
+      setTimeout(() => { setNotification(null) }, 5000)
     } catch (exception) {
-      setErrorMessage('wrong credentials')
+      setErrorMessage('wrong username or password')
       setTimeout(() => { setErrorMessage(null) }, 5000)
     }
   }
@@ -47,19 +50,29 @@ const App = () => {
     event.preventDefault()
     window.localStorage.clear()
     setUser(null)
+    setNotification('logout successful')
+    setTimeout(() => { setNotification(null) }, 5000)
   }
 
-  const handleAdd = (event) => {
+  const handleAdd = async (event) => {
     event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url
+    try {
+      const blogObject = {
+        title: title,
+        author: author,
+        url: url
+      }
+      const response = await blogService.addNew(blogObject)
+      setBlogs(blogs.concat(response))
+      setTitle('')
+      setAuthor('')
+      setUrl('')
+      setNotification(`added ${title} by ${author}`)
+      setTimeout(() => { setNotification(null) }, 5000)
+    } catch (exception) {
+      setErrorMessage('adding blog failed')
+      setTimeout(() => { setErrorMessage(null) }, 5000)
     }
-    blogService.addNew(blogObject).then(returnedBlog => {setBlogs(blogs.concat(returnedBlog))})
-    setTitle('')
-    setAuthor('')
-    setUrl('')
   }
 
   const loginForm = () => {
@@ -119,8 +132,8 @@ const App = () => {
 
   return (
     <div>
-      {errormessage}
-      {notification}
+      <Error message={errormessage}/>
+      <Notification message={notification}/>
       {!user && loginForm()}
       {user && blogViewer()}
     </div>
