@@ -39,9 +39,10 @@ const App = () => {
   const createBlog = async (blog) => {
     try {
       addBlogFormRef.current.toggleVisibility()
-      const response = await blogService.addNew(blog)
-      setBlogs(blogs.concat(response))
-      setNotification(`added ${response.title} by ${response.author}`)
+      const addedBlog = await blogService.addNew(blog)
+      const response = await blogService.getAll()
+      setBlogs(response)
+      setNotification(`added ${addedBlog.title} by ${addedBlog.author}`)
       setTimeout(() => { setNotification(null) }, 5000)
     } catch (exception) {
       setErrorMessage('adding blog failed')
