@@ -17,5 +17,9 @@ const addNew = async newObject => {
   return response.data
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default { getAll, addNew, setToken }
+const addLike = async (id, changedBlog) => {
+  const response = await axios.put(`${baseUrl}/${id}`, changedBlog)
+  return response.data
+}
+
+export default { getAll, addNew, setToken, addLike }

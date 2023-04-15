@@ -50,6 +50,20 @@ const App = () => {
     }
   }
 
+  const addLike = async (id) => {
+    try {
+      const blog = blogs.find(b => b.id === id)
+      const newLikes = blog.likes+1
+      const changedBlog = { ...blog, likes: newLikes }
+      await blogService.addLike(id, changedBlog)
+      const response = await blogService.getAll()
+      setBlogs(response)
+    } catch (exception) {
+      setErrorMessage('adding like failed')
+      setTimeout(() => { setErrorMessage(null) }, 5000)
+    }
+  }
+
   const loginUser = async (handledUser) => {
     try {
       const user = await loginService.login(handledUser)
@@ -75,7 +89,7 @@ const App = () => {
       </Togglable>
       <p></p>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={addLike} />
       )}
       </>
     )
