@@ -64,6 +64,21 @@ const App = () => {
     }
   }
 
+  const deleteBlog = async (id) => {
+    if (window.confirm(`Remove blog ${blogs.find(blog => blog.id === id).title} by ${blogs.find(blog => blog.id === id).author}?`)) {
+      try {
+        await blogService.deleteOne(id)
+        const response = await blogService.getAll()
+        setBlogs(response)
+        setNotification('blog deleted')
+        setTimeout(() => { setNotification(null) }, 5000)        
+      } catch (exception) {
+        setErrorMessage('deleting blog failed')
+        setTimeout(() => { setErrorMessage(null) }, 5000)
+      }
+    }
+  }
+
   const loginUser = async (handledUser) => {
     try {
       const user = await loginService.login(handledUser)
@@ -89,7 +104,7 @@ const App = () => {
       </Togglable>
       <p></p>
       {blogs.sort((a, b) => b.likes-a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={addLike} />
+        <Blog key={blog.id} blog={blog} addLike={addLike} deleteBlog={deleteBlog} user={user.username} />
       )}
       </>
     )

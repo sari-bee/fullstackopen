@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-const Blog = ({blog, addLike}) => {
+const Blog = ({blog, addLike, deleteBlog, user}) => {
   const [informationVisible, setInformationVisible] = useState(false)
 
   const hideWhenVisible = { display: informationVisible ? 'none' : '' }
@@ -9,6 +9,25 @@ const Blog = ({blog, addLike}) => {
   const handleAddLike = (event) => {
     event.preventDefault()
     addLike(blog.id)
+  }
+
+  const handleDelete = (event) => {
+    event.preventDefault()
+    deleteBlog(blog.id)
+  }
+
+  const deleteButton = () => {
+    if (blog.user.username === user) {
+      return (
+        <>
+        <button onClick={handleDelete}>remove</button>
+        </>
+      )
+    } else {
+      return (
+        <></>
+      )
+    }
   }
 
   return (
@@ -21,6 +40,7 @@ const Blog = ({blog, addLike}) => {
         <a href={blog.url}>{blog.url}</a><br/>
         likes {blog.likes} <button onClick={handleAddLike}>like</button><br/>
         {blog.user.name}<br/>
+        {deleteButton()}
       </div>
   </div>
   )
