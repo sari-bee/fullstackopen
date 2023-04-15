@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
+import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
 import Error from './components/Error'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
-import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -67,12 +67,9 @@ const App = () => {
     return (
       <>
       <h2>blogs</h2>
-      {user.name} logged in
-      <form onSubmit={handleLogout}>
-        <button type="submit">log out</button>
-      </form>
+      <form onSubmit={handleLogout}>{user.name} logged in <button type="submit">logout</button></form>
       <p></p>
-      <Togglable buttonLabel='create new blog' ref={addBlogFormRef}>
+      <Togglable buttonLabel='create new blog' closeLabel='cancel' ref={addBlogFormRef}>
         <AddBlogForm createBlog={createBlog}/>
       </Togglable>
       <p></p>
