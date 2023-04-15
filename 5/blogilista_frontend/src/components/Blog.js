@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
 
-const Blog = ({blog, addLike, deleteBlog, user}) => {
+const Blog = ({ blog, addLike, deleteBlog, user }) => {
   const [informationVisible, setInformationVisible] = useState(false)
 
   const hideWhenVisible = { display: informationVisible ? 'none' : '' }
-  const showWhenVisible = { display: informationVisible ? '' : 'none' }  
+  const showWhenVisible = { display: informationVisible ? '' : 'none' }
 
   const handleAddLike = (event) => {
     event.preventDefault()
@@ -20,7 +21,7 @@ const Blog = ({blog, addLike, deleteBlog, user}) => {
     if (blog.user.username === user) {
       return (
         <>
-        <button onClick={handleDelete}>remove</button>
+          <button onClick={handleDelete}>remove</button>
         </>
       )
     } else {
@@ -42,8 +43,15 @@ const Blog = ({blog, addLike, deleteBlog, user}) => {
         {blog.user.name}<br/>
         {deleteButton()}
       </div>
-  </div>
+    </div>
   )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  addLike: PropTypes.func.isRequired,
+  deleteBlog: PropTypes.func.isRequired,
+  user: PropTypes.string.isRequired
 }
 
 export default Blog

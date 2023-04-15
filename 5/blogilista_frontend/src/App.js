@@ -16,7 +16,7 @@ const App = () => {
   const addBlogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(response => {setBlogs(response)})  
+    blogService.getAll().then(response => {setBlogs(response)})
   }, [])
 
   useEffect(() => {
@@ -71,7 +71,7 @@ const App = () => {
         const response = await blogService.getAll()
         setBlogs(response)
         setNotification('blog deleted')
-        setTimeout(() => { setNotification(null) }, 5000)        
+        setTimeout(() => { setNotification(null) }, 5000)
       } catch (exception) {
         setErrorMessage('deleting blog failed')
         setTimeout(() => { setErrorMessage(null) }, 5000)
@@ -96,16 +96,16 @@ const App = () => {
   const blogViewer = () => {
     return (
       <>
-      <h2>blogs</h2>
-      <form onSubmit={handleLogout}>{user.name} logged in <button type="submit">logout</button></form>
-      <p></p>
-      <Togglable buttonLabel='create new blog' closeLabel='cancel' ref={addBlogFormRef}>
-        <AddBlogForm createBlog={createBlog}/>
-      </Togglable>
-      <p></p>
-      {blogs.sort((a, b) => b.likes-a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={addLike} deleteBlog={deleteBlog} user={user.username} />
-      )}
+        <h2>blogs</h2>
+        <form onSubmit={handleLogout}>{user.name} logged in <button type="submit">logout</button></form>
+        <p></p>
+        <Togglable buttonLabel='create new blog' closeLabel='cancel' ref={addBlogFormRef}>
+          <AddBlogForm createBlog={createBlog}/>
+        </Togglable>
+        <p></p>
+        {blogs.sort((a, b) => b.likes-a.likes).map(blog =>
+          <Blog key={blog.id} blog={blog} addLike={addLike} deleteBlog={deleteBlog} user={user.username} />
+        )}
       </>
     )
   }
