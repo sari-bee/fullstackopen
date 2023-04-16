@@ -26,7 +26,7 @@ describe('Blog app', function() {
       cy.get('#username').type('akuankka')
       cy.get('#password').type('roopensalasana')
       cy.get('#login-button').click()
-      cy.contains('log in to application')
+      cy.contains('wrong username or password')
     })
   })
 
@@ -35,15 +35,21 @@ describe('Blog app', function() {
       cy.get('#username').type('akuankka')
       cy.get('#password').type('ankansalasana')
       cy.get('#login-button').click()      
-    })
-
-    it('a blog can be created', function() {
       cy.contains('create new blog').click()
       cy.get('#title-input').type('Tämä on blogi')
       cy.get('#author-input').type('Bloggaaja')
       cy.get('#url-input').type('www.blogi.com')
       cy.get('#submit-button').click()
-      cy.contains('Tämä on blogi')
+    })
+
+    it('a blog can be created', function() {
+      cy.get('#blogListing').contains('Tämä on blogi')
+    })
+
+    it('a blog can be liked', function() {
+      cy.contains('view').click()
+      cy.get('#like-button').click()
+      cy.contains('1')
     })
   })
 })
