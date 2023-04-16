@@ -29,4 +29,21 @@ describe('Blog app', function() {
       cy.contains('log in to application')
     })
   })
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.get('#username').type('akuankka')
+      cy.get('#password').type('ankansalasana')
+      cy.get('#login-button').click()      
+    })
+
+    it('a blog can be created', function() {
+      cy.contains('create new blog').click()
+      cy.get('#title-input').type('Tämä on blogi')
+      cy.get('#author-input').type('Bloggaaja')
+      cy.get('#url-input').type('www.blogi.com')
+      cy.get('#submit-button').click()
+      cy.contains('Tämä on blogi')
+    })
+  })
 })
