@@ -97,7 +97,7 @@ const App = () => {
     return (
       <>
         <h2>blogs</h2>
-        <form onSubmit={handleLogout}>{user.name} logged in <button type="submit">logout</button></form>
+        <form onSubmit={handleLogout}>{user.name} logged in <button type="submit" id="logout-button">logout</button></form>
         <p></p>
         <Togglable buttonLabel='create new blog' closeLabel='cancel' ref={addBlogFormRef}>
           <AddBlogForm createBlog={createBlog}/>

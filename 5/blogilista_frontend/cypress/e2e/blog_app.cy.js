@@ -1,13 +1,8 @@
 describe('Blog app', function() {
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
-    const user = {
-      username: 'akuankka',
-      password: 'ankansalasana',
-      name: 'Aku Ankka'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users', user)
-    cy.visit('http://localhost:3000')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
+    cy.addUser({ username: 'akuankka', password: 'ankansalasana', name: 'Aku Ankka' })
+    cy.addUser({ username: 'roopeankka', password: 'roopensalasana', name: 'Roope Ankka' })
   })
 
   it('Login form is shown', function() {
@@ -32,30 +27,41 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.get('#username').type('akuankka')
-      cy.get('#password').type('ankansalasana')
-      cy.get('#login-button').click()      
+      cy.login({ username: 'akuankka', password: 'ankansalasana' })
+    })
+
+    it('a blog can be created', function() {
       cy.contains('create new blog').click()
       cy.get('#title-input').type('Tämä on blogi')
       cy.get('#author-input').type('Bloggaaja')
       cy.get('#url-input').type('www.blogi.com')
       cy.get('#submit-button').click()
-    })
-
-    it('a blog can be created', function() {
       cy.get('#blog-listing').contains('Tämä on blogi')
     })
 
-    it('a blog can be liked', function() {
-      cy.contains('view').click()
-      cy.get('#like-button').click()
-      cy.contains('0')
-    })
+    describe('When a blog has been added', function() {
+      beforeEach(function() {
+        cy.createBlog({ title: 'Tämä on blogi', author: 'Bloggaaja', url: 'www.blogi.com' })
+      })
 
-    it('a blog can be removed', function() {
-      cy.contains('view').click()
-      cy.get('#delete-button').click()
-      cy.get('#blog-listing').contains('Tämä on blogi').should('not.exist')
+      it('it can be liked', function() {
+        cy.contains('view').click()
+        cy.get('#like-button').click()
+        cy.contains('0')
+      })
+  
+      it('it can be removed', function() {
+        cy.contains('view').click()
+        cy.get('#delete-button').click()
+        cy.get('#blog-listing').contains('Tämä on blogi').should('not.exist')
+      })
+
+      it('remove button is only shown to the user that added the blog', function() {
+        cy.get('#logout-button').click()
+        cy.login({ username: 'roopeankka', password: 'roopensalasana' })
+        cy.contains('view').click()
+        cy.get('#delete-button').should('not.exist')
+      })
     })
   })
 })
