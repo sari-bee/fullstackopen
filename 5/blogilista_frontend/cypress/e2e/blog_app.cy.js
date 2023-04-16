@@ -43,13 +43,19 @@ describe('Blog app', function() {
     })
 
     it('a blog can be created', function() {
-      cy.get('#blogListing').contains('Tämä on blogi')
+      cy.get('#blog-listing').contains('Tämä on blogi')
     })
 
     it('a blog can be liked', function() {
       cy.contains('view').click()
       cy.get('#like-button').click()
-      cy.contains('1')
+      cy.contains('0')
+    })
+
+    it('a blog can be removed', function() {
+      cy.contains('view').click()
+      cy.get('#delete-button').click()
+      cy.get('#blog-listing').contains('Tämä on blogi').should('not.exist')
     })
   })
 })
