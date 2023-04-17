@@ -47,7 +47,7 @@ describe('Blog app', function() {
       it('it can be liked', function() {
         cy.contains('view').click()
         cy.get('#like-button').click()
-        cy.contains('0')
+        cy.contains('1')
       })
   
       it('it can be removed', function() {
@@ -61,6 +61,20 @@ describe('Blog app', function() {
         cy.login({ username: 'roopeankka', password: 'roopensalasana' })
         cy.contains('view').click()
         cy.get('#delete-button').should('not.exist')
+      })
+
+      it('blogs are sorted according to likes', function() {
+        cy.createBlog({ title: 'Elämää Mikin kanssa', author: 'Hessu Hopo', url: 'www.hopo.fi' })
+        cy.createBlog({ title: 'Elämää Hessun kanssa', author: 'Mikki Hiiri', url: 'www.mikki.fi' })
+        cy.get('.blogStyle').eq(0).contains('Tämä on blogi')
+        cy.get('.blogStyle').eq(1).contains('Elämää Mikin kanssa')
+        cy.get('.blogStyle').eq(1).contains('view').click()
+        cy.get('.blogStyle').eq(1).contains('like').click()
+        cy.get('.blogStyle').eq(0).contains('like').click()
+        cy.get('.blogStyle').eq(2).contains('view').click()
+        cy.get('.blogStyle').eq(2).contains('like').click()
+        cy.get('.blogStyle').eq(0).contains('Elämää Mikin kanssa')
+        cy.get('.blogStyle').eq(1).contains('Elämää Hessun kanssa')
       })
     })
   })
