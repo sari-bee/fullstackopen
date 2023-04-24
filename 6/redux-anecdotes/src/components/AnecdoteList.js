@@ -2,8 +2,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { createVote } from '../reducers/anecdoteReducer'
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector(state => state)
   const dispatch = useDispatch()
+  const value = useSelector(state => state.filter)
+  const anecdotes = useSelector(state => state.anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(value.toLowerCase())))
 
   const vote = (id) => {
     dispatch(createVote(id))
