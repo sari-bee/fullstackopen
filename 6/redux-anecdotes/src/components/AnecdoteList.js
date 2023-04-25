@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { createVote } from '../reducers/anecdoteReducer'
+import { createNewVote } from '../reducers/anecdoteReducer'
 import { createNewNotification } from '../reducers/notificationReducer'
 
 const AnecdoteList = () => {
@@ -8,7 +8,7 @@ const AnecdoteList = () => {
   const anecdotes = useSelector(state => state.anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(value.toLowerCase())))
 
   const vote = (id, content) => {
-    dispatch(createVote(id))
+    dispatch(createNewVote(id))
     dispatch(createNewNotification(`you voted "${content}"`))
   }
 
