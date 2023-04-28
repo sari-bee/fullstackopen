@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { getAnecdotes, updateAnecdote } from './requests'
 
 const App = () => {
-  
+
   const queryClient = useQueryClient()
 
   const handleVote = async (anecdote) => {
