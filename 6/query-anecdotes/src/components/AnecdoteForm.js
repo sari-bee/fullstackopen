@@ -17,9 +17,14 @@ const AnecdoteForm = () => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    newAnecdoteMutation.mutate({ content, votes: 0 })
-    notificationDispatch({ type : "CREATE", payload: content})
-    setTimeout(() => { notificationDispatch({ type: "RESET" }) }, 5000)
+    if (content.length < 5) {
+      notificationDispatch({ type : "ERROR"})
+      setTimeout(() => { notificationDispatch({ type: "RESET" }) }, 5000)
+    } else {
+      newAnecdoteMutation.mutate({ content, votes: 0 })
+      notificationDispatch({ type : "CREATE", payload: content})
+      setTimeout(() => { notificationDispatch({ type: "RESET" }) }, 5000)
+    }
   }
 
   return (
