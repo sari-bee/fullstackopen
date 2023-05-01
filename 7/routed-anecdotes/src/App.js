@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom'
 
 const Menu = () => {
   const padding = {
@@ -7,9 +7,9 @@ const Menu = () => {
   }
   return (
     <div>
-      <a href='/' style={padding}>anecdotes</a>
-      <a href='/create' style={padding}>create new</a>
-      <a href='/about' style={padding}>about</a>
+      <Link style={padding} to="/">anecdotes</Link>
+      <Link style={padding} to="/create">create</Link>
+      <Link style={padding} to="/about">about</Link>
     </div>
   )
 }
@@ -18,7 +18,7 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} ><a href={`/anecdotes/${anecdote.id}`}>{anecdote.content}</a></li>)}
+      {anecdotes.map(anecdote => <li key={anecdote.id} ><Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link></li>)}
     </ul>
   </div>
 )
@@ -58,6 +58,7 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
+  const navigate = useNavigate()
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
@@ -71,6 +72,9 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
+    props.setNotification(`a new anecdote ${content} created!`)
+    setTimeout(() => { props.setNotification('') }, 5000)
   }
 
   return (
@@ -140,10 +144,11 @@ const App = () => {
       <div>
         <h2>Software anecdotes</h2>
         <Menu />
+        {notification}
       </div>
       <Routes>
         <Route path="/" element={<AnecdoteList anecdotes={anecdotes}/>}/>
-        <Route path="/create" element={<CreateNew addNew={addNew} />}/>
+        <Route path="/create" element={<CreateNew addNew={addNew} setNotification={setNotification}/>}/>
         <Route path="/about" element={<About />}/>
         <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes}/>}/>
       </Routes>
