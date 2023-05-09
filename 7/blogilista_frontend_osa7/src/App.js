@@ -1,27 +1,37 @@
 import { useState, useEffect, useContext, useRef } from 'react'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
-import NotificationContext, { NotificationContextProvider } from './NotificationContext'
+import NotificationContext from './NotificationContext'
 import Error from './components/Error'
-import ErrorContext, { ErrorContextProvider } from './ErrorContext'
+import ErrorContext from './ErrorContext'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  const queryClient = useQueryClient()
   const [user, setUser] = useState(null)
   const [errormessage, errorDispatch] = useContext(ErrorContext)
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const addBlogFormRef = useRef()
-
-  useEffect(() => {
-    blogService.getAll().then((response) => {
-      setBlogs(response)
-    })
-  }, [])
+  const newBlogMutation = useMutation(blogService.addNew, {
+    onSuccess: (newBlog) => {
+      queryClient.invalidateQueries('blogs')
+      notificationDispatch({ type: "ADDBLOG", payload: newBlog })
+      setTimeout(() => {
+        notificationDispatch({ type: "RESET" })
+      }, 5000)
+    },
+    onError: () => {
+      errorDispatch({ type: "ADDBLOGERROR" })
+      setTimeout(() => {
+        errorDispatch({ type: "RESET" })
+      }, 5000)
+    }
+  })
 
   useEffect(() => {
     const alreadyLoggedUser = window.localStorage.getItem('loggedBlogUser')
@@ -31,6 +41,10 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const result = useQuery('blogs', blogService.getBlogs)
+  if (result.isLoading) { return <div>please wait</div> }
+  const blogs = result.data
 
   const handleLogout = (event) => {
     event.preventDefault()
@@ -43,21 +57,8 @@ const App = () => {
   }
 
   const createBlog = async (blog) => {
-    try {
-      addBlogFormRef.current.toggleVisibility()
-      const addedBlog = await blogService.addNew(blog)
-      const response = await blogService.getAll()
-      setBlogs(response)
-      notificationDispatch({ type: "ADDBLOG", payload: addedBlog })
-      setTimeout(() => {
-        notificationDispatch({ type: "RESET" })
-      }, 5000)
-    } catch (exception) {
-      errorDispatch({ type: "ADDBLOGERROR" })
-      setTimeout(() => {
-        errorDispatch({ type: "RESET" })
-      }, 5000)
-    }
+    addBlogFormRef.current.toggleVisibility()
+    newBlogMutation.mutate(blog)
   }
 
   const addLike = async (id) => {
@@ -66,8 +67,7 @@ const App = () => {
       const newLikes = blog.likes + 1
       const changedBlog = { ...blog, likes: newLikes }
       await blogService.addLike(id, changedBlog)
-      const response = await blogService.getAll()
-      setBlogs(response)
+      queryClient.invalidateQueries('blogs')
     } catch (exception) {
       errorDispatch({ type: "ADDLIKEERROR" })
       setTimeout(() => {
@@ -86,8 +86,7 @@ const App = () => {
     ) {
       try {
         await blogService.deleteOne(id)
-        const response = await blogService.getAll()
-        setBlogs(response)
+        queryClient.invalidateQueries('blogs')
         notificationDispatch({ type: "DELETE" })
         setTimeout(() => {
           notificationDispatch({ type: "RESET" })
