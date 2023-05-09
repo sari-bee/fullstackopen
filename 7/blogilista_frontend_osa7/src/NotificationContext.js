@@ -4,8 +4,8 @@ const notificationReducer = (state, action) => {
     switch (action.type) {
       case "LOGOUT":
         return 'logout successful'
-        case "LOGIN":
-            return 'login successful'
+      case "LOGIN":
+        return 'login successful'
       case "ADDBLOG":
         return `added ${action.payload.title} by ${action.payload.author}`
       case "DELETE":

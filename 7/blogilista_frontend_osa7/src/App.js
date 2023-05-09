@@ -1,18 +1,19 @@
 import { useState, useEffect, useContext, useRef } from 'react'
-import NotificationContext from './NotificationContext'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
+import NotificationContext, { NotificationContextProvider } from './NotificationContext'
 import Error from './components/Error'
+import ErrorContext, { ErrorContextProvider } from './ErrorContext'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
-  const [errormessage, setErrorMessage] = useState(null)
+  const [errormessage, errorDispatch] = useContext(ErrorContext)
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const addBlogFormRef = useRef()
 
@@ -52,9 +53,9 @@ const App = () => {
         notificationDispatch({ type: "RESET" })
       }, 5000)
     } catch (exception) {
-      setErrorMessage('adding blog failed')
+      errorDispatch({ type: "ADDBLOGERROR" })
       setTimeout(() => {
-        setErrorMessage(null)
+        errorDispatch({ type: "RESET" })
       }, 5000)
     }
   }
@@ -68,9 +69,9 @@ const App = () => {
       const response = await blogService.getAll()
       setBlogs(response)
     } catch (exception) {
-      setErrorMessage('adding like failed')
+      errorDispatch({ type: "ADDLIKEERROR" })
       setTimeout(() => {
-        setErrorMessage(null)
+        errorDispatch({ type: "RESET" })
       }, 5000)
     }
   }
@@ -92,9 +93,9 @@ const App = () => {
           notificationDispatch({ type: "RESET" })
         }, 5000)
       } catch (exception) {
-        setErrorMessage('deleting blog failed')
+        errorDispatch({ type: "DELETEERROR" })
         setTimeout(() => {
-          setErrorMessage(null)
+          errorDispatch({ type: "RESET" })
         }, 5000)
       }
     }
@@ -111,9 +112,9 @@ const App = () => {
         notificationDispatch({ type: "RESET" })
       }, 5000)
     } catch (exception) {
-      setErrorMessage('wrong username or password')
+      errorDispatch({ type: "AUTHENTICATIONERROR" })
       setTimeout(() => {
-        setErrorMessage(null)
+        errorDispatch({ type: "RESET" })
       }, 5000)
     }
   }
@@ -155,12 +156,14 @@ const App = () => {
   }
 
   return (
-    <div>
-      <Error message={errormessage} />
-      <Notification message={notification} />
-      {!user && <LoginForm loginUser={loginUser} />}
-      {user && blogViewer()}
-    </div>
+    <NotificationContext.Provider value={[notification, notificationDispatch]}>
+      <div>
+        <Error message={errormessage} />
+        <Notification message={notification} />
+        {!user && <LoginForm loginUser={loginUser} />}
+        {user && blogViewer()}
+      </div>
+    </NotificationContext.Provider>
   )
 }
 
