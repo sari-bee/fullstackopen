@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useState } from 'react'
 
 const LoginForm = ({ loginUser }) => {
   const [username, setUsername] = useState('')
@@ -20,7 +20,6 @@ const LoginForm = ({ loginUser }) => {
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username{' '}
           <input
             type="text"
             id="username"
@@ -30,7 +29,6 @@ const LoginForm = ({ loginUser }) => {
           />
         </div>
         <div>
-          password{' '}
           <input
             type="password"
             id="password"

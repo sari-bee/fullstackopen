@@ -165,14 +165,16 @@ const App = () => {
   }
 
   return (
-    <NotificationContext.Provider value={[notification, notificationDispatch]}>
-      <div>
-        <Error message={errormessage} />
-        <Notification message={notification} />
-        {!user && <LoginForm loginUser={loginUser} />}
-        {user && blogViewer()}
-      </div>
-    </NotificationContext.Provider>
+      <ErrorContext.Provider value={[errormessage, errorDispatch]}>
+        <NotificationContext.Provider value={[notification, notificationDispatch]}>
+        <div>
+          <Error message={errormessage} />
+          <Notification message={notification} />
+          {!user && <LoginForm loginUser={loginUser} />}
+          {user && blogViewer()}
+        </div>
+      </NotificationContext.Provider>
+      </ErrorContext.Provider>
   )
 }
 
