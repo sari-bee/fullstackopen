@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef, useReducer } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
+import NotificationContext from './NotificationContext'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
@@ -8,23 +9,11 @@ import Error from './components/Error'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
 
-const notificationReducer = (state, action) => {
-  switch (action.type) {
-    case 'NOTIFY':
-      return state
-    default:
-      return state
-  }
-}
-
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [errormessage, setErrorMessage] = useState(null)
-  const [notification, notificationDispatch] = useReducer(
-    notificationReducer,
-    null
-  )
+  const [notification, notificationDispatch] = useContext(NotificationContext)
   const addBlogFormRef = useRef()
 
   useEffect(() => {
@@ -46,9 +35,9 @@ const App = () => {
     event.preventDefault()
     window.localStorage.clear()
     setUser(null)
-    setNotification('logout successful')
+    notificationDispatch({ type: "LOGOUT" })
     setTimeout(() => {
-      setNotification(null)
+      notificationDispatch({ type: "RESET" })
     }, 5000)
   }
 
@@ -58,9 +47,9 @@ const App = () => {
       const addedBlog = await blogService.addNew(blog)
       const response = await blogService.getAll()
       setBlogs(response)
-      setNotification(`added ${addedBlog.title} by ${addedBlog.author}`)
+      notificationDispatch({ type: "ADDBLOG", payload: addedBlog })
       setTimeout(() => {
-        setNotification(null)
+        notificationDispatch({ type: "RESET" })
       }, 5000)
     } catch (exception) {
       setErrorMessage('adding blog failed')
@@ -98,9 +87,9 @@ const App = () => {
         await blogService.deleteOne(id)
         const response = await blogService.getAll()
         setBlogs(response)
-        setNotification('blog deleted')
+        notificationDispatch({ type: "DELETE" })
         setTimeout(() => {
-          setNotification(null)
+          notificationDispatch({ type: "RESET" })
         }, 5000)
       } catch (exception) {
         setErrorMessage('deleting blog failed')
@@ -117,9 +106,9 @@ const App = () => {
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
-      setNotification('login successful')
+      notificationDispatch({ type: "LOGIN" })
       setTimeout(() => {
-        setNotification(null)
+        notificationDispatch({ type: "RESET" })
       }, 5000)
     } catch (exception) {
       setErrorMessage('wrong username or password')
