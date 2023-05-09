@@ -17,6 +17,7 @@ const App = () => {
   const [errormessage, errorDispatch] = useContext(ErrorContext)
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const addBlogFormRef = useRef()
+
   const newBlogMutation = useMutation(blogService.addNew, {
     onSuccess: (newBlog) => {
       queryClient.invalidateQueries('blogs')
@@ -27,6 +28,34 @@ const App = () => {
     },
     onError: () => {
       errorDispatch({ type: "ADDBLOGERROR" })
+      setTimeout(() => {
+        errorDispatch({ type: "RESET" })
+      }, 5000)
+    }
+  })
+
+  const changeBlogMutation = useMutation(blogService.addLike, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+    },
+    onError: () => {
+      errorDispatch({ type: "ADDLIKEERROR" })
+      setTimeout(() => {
+        errorDispatch({ type: "RESET" })
+      }, 5000)
+    }
+  })
+
+  const deleteBlogMutation = useMutation(blogService.deleteOne, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('blogs')
+      notificationDispatch({ type: "DELETE" })
+      setTimeout(() => {
+        notificationDispatch({ type: "RESET" })
+      }, 5000)      
+    },
+    onError: () => {
+      errorDispatch({ type: "DELETEERROR" })
       setTimeout(() => {
         errorDispatch({ type: "RESET" })
       }, 5000)
@@ -62,18 +91,10 @@ const App = () => {
   }
 
   const addLike = async (id) => {
-    try {
-      const blog = blogs.find((b) => b.id === id)
-      const newLikes = blog.likes + 1
-      const changedBlog = { ...blog, likes: newLikes }
-      await blogService.addLike(id, changedBlog)
-      queryClient.invalidateQueries('blogs')
-    } catch (exception) {
-      errorDispatch({ type: "ADDLIKEERROR" })
-      setTimeout(() => {
-        errorDispatch({ type: "RESET" })
-      }, 5000)
-    }
+    const blog = blogs.find((b) => b.id === id)
+    const newLikes = blog.likes + 1
+    const changedBlog = { ...blog, likes: newLikes }
+    changeBlogMutation.mutate(changedBlog)
   }
 
   const deleteBlog = async (id) => {
@@ -84,20 +105,9 @@ const App = () => {
         }?`
       )
     ) {
-      try {
-        await blogService.deleteOne(id)
-        queryClient.invalidateQueries('blogs')
-        notificationDispatch({ type: "DELETE" })
-        setTimeout(() => {
-          notificationDispatch({ type: "RESET" })
-        }, 5000)
-      } catch (exception) {
-        errorDispatch({ type: "DELETEERROR" })
-        setTimeout(() => {
-          errorDispatch({ type: "RESET" })
-        }, 5000)
-      }
-    }
+      deleteBlogMutation.mutate(id)
+
+    }    
   }
 
   const loginUser = async (handledUser) => {
