@@ -21,7 +21,7 @@ blogRouter.post('/', middleware.userExtractor, async (request, response) => {
       author: body.author,
       url: body.url,
       likes: body.likes || 0,
-      user: user._id
+      user: user._id,
     })
     const savedBlog = await blog.save()
     user.blogs = user.blogs.concat(savedBlog)
@@ -30,17 +30,21 @@ blogRouter.post('/', middleware.userExtractor, async (request, response) => {
   }
 })
 
-blogRouter.delete('/:id', middleware.userExtractor, async (request, response) => {
-  const blog = await Blog.findById(request.params.id)
-  const user = request.user
+blogRouter.delete(
+  '/:id',
+  middleware.userExtractor,
+  async (request, response) => {
+    const blog = await Blog.findById(request.params.id)
+    const user = request.user
 
-  if (blog.user.toString() === user.id.toString()) {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
-  } else {
-    response.status(401).json({ error: 'deletion is unauthorized' })
+    if (blog.user.toString() === user.id.toString()) {
+      await Blog.findByIdAndRemove(request.params.id)
+      response.status(204).end()
+    } else {
+      response.status(401).json({ error: 'deletion is unauthorized' })
+    }
   }
-})
+)
 
 blogRouter.put('/:id', async (request, response) => {
   const body = request.body
@@ -48,9 +52,11 @@ blogRouter.put('/:id', async (request, response) => {
     title: body.title,
     author: body.author,
     url: body.url,
-    likes: body.likes || 0  
+    likes: body.likes || 0,
   }
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {
+    new: true,
+  })
   response.json(updatedBlog)
 })
 

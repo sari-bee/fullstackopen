@@ -9,7 +9,7 @@ const LoginForm = ({ loginUser }) => {
     event.preventDefault()
     loginUser({
       username: username,
-      password: password
+      password: password,
     })
     setUsername('')
     setPassword('')
@@ -20,19 +20,35 @@ const LoginForm = ({ loginUser }) => {
       <h2>log in to application</h2>
       <form onSubmit={handleLogin}>
         <div>
-          username <input type="text" id="username" value={username} name="username" onChange={({ target }) => setUsername(target.value)}/>
+          username{' '}
+          <input
+            type="text"
+            id="username"
+            value={username}
+            name="username"
+            onChange={({ target }) => setUsername(target.value)}
+          />
         </div>
         <div>
-          password <input type="password" id="password" value={password} name="password" onChange={({ target }) => setPassword(target.value)}/>
+          password{' '}
+          <input
+            type="password"
+            id="password"
+            value={password}
+            name="password"
+            onChange={({ target }) => setPassword(target.value)}
+          />
         </div>
-        <button type="submit" id="login-button">login</button>
+        <button type="submit" id="login-button">
+          login
+        </button>
       </form>
     </>
   )
 }
 
 LoginForm.propTypes = {
-  loginUser: PropTypes.func.isRequired
+  loginUser: PropTypes.func.isRequired,
 }
 
 export default LoginForm

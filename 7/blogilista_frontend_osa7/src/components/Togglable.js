@@ -31,7 +31,7 @@ Togglable.displayName = 'Togglable'
 
 Togglable.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
-  closeLabel: PropTypes.string.isRequired
+  closeLabel: PropTypes.string.isRequired,
 }
 
 export default Togglable

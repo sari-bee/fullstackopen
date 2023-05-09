@@ -11,7 +11,7 @@ const blog = {
   likes: 1,
   user: {
     name: 'akuankka',
-  }
+  },
 }
 
 test('renders blog title and author', () => {
@@ -39,7 +39,7 @@ test('after opening hidden content is displayed', async () => {
 
 test('if like button clicked twice event handler called twice', async () => {
   const mockHandler = jest.fn()
-  render(<Blog blog={blog} addLike={mockHandler}/>)
+  render(<Blog blog={blog} addLike={mockHandler} />)
   const user = userEvent.setup()
   const viewButton = screen.getByText('view')
   await user.click(viewButton)

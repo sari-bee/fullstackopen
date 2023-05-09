@@ -11,7 +11,7 @@ const AddBlogForm = ({ createBlog }) => {
     createBlog({
       title: title,
       author: author,
-      url: url
+      url: url,
     })
     setTitle('')
     setAuthor('')
@@ -23,22 +23,45 @@ const AddBlogForm = ({ createBlog }) => {
       <h2>create new</h2>
       <form onSubmit={handleAdd}>
         <div>
-          title <input type="text" value={title} name="title" id="title-input" onChange={({ target }) => setTitle(target.value)}/>
+          title{' '}
+          <input
+            type="text"
+            value={title}
+            name="title"
+            id="title-input"
+            onChange={({ target }) => setTitle(target.value)}
+          />
         </div>
         <div>
-          author <input type="text" value={author} name="author" id="author-input" onChange={({ target }) => setAuthor(target.value)}/>
+          author{' '}
+          <input
+            type="text"
+            value={author}
+            name="author"
+            id="author-input"
+            onChange={({ target }) => setAuthor(target.value)}
+          />
         </div>
         <div>
-          url <input type="text" value={url} name="url" id="url-input" onChange={({ target }) => setUrl(target.value)}/>
+          url{' '}
+          <input
+            type="text"
+            value={url}
+            name="url"
+            id="url-input"
+            onChange={({ target }) => setUrl(target.value)}
+          />
         </div>
-        <button type="submit" id="submit-button">create</button>
+        <button type="submit" id="submit-button">
+          create
+        </button>
       </form>
     </>
   )
 }
 
 AddBlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired
+  createBlog: PropTypes.func.isRequired,
 }
 
 export default AddBlogForm

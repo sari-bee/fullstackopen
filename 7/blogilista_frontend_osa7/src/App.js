@@ -16,7 +16,9 @@ const App = () => {
   const addBlogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(response => {setBlogs(response)})
+    blogService.getAll().then((response) => {
+      setBlogs(response)
+    })
   }, [])
 
   useEffect(() => {
@@ -33,7 +35,9 @@ const App = () => {
     window.localStorage.clear()
     setUser(null)
     setNotification('logout successful')
-    setTimeout(() => { setNotification(null) }, 5000)
+    setTimeout(() => {
+      setNotification(null)
+    }, 5000)
   }
 
   const createBlog = async (blog) => {
@@ -43,38 +47,54 @@ const App = () => {
       const response = await blogService.getAll()
       setBlogs(response)
       setNotification(`added ${addedBlog.title} by ${addedBlog.author}`)
-      setTimeout(() => { setNotification(null) }, 5000)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     } catch (exception) {
       setErrorMessage('adding blog failed')
-      setTimeout(() => { setErrorMessage(null) }, 5000)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
   const addLike = async (id) => {
     try {
-      const blog = blogs.find(b => b.id === id)
-      const newLikes = blog.likes+1
+      const blog = blogs.find((b) => b.id === id)
+      const newLikes = blog.likes + 1
       const changedBlog = { ...blog, likes: newLikes }
       await blogService.addLike(id, changedBlog)
       const response = await blogService.getAll()
       setBlogs(response)
     } catch (exception) {
       setErrorMessage('adding like failed')
-      setTimeout(() => { setErrorMessage(null) }, 5000)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
   const deleteBlog = async (id) => {
-    if (window.confirm(`Remove blog ${blogs.find(blog => blog.id === id).title} by ${blogs.find(blog => blog.id === id).author}?`)) {
+    if (
+      window.confirm(
+        `Remove blog ${blogs.find((blog) => blog.id === id).title} by ${
+          blogs.find((blog) => blog.id === id).author
+        }?`
+      )
+    ) {
       try {
         await blogService.deleteOne(id)
         const response = await blogService.getAll()
         setBlogs(response)
         setNotification('blog deleted')
-        setTimeout(() => { setNotification(null) }, 5000)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       } catch (exception) {
         setErrorMessage('deleting blog failed')
-        setTimeout(() => { setErrorMessage(null) }, 5000)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       }
     }
   }
@@ -86,10 +106,14 @@ const App = () => {
       blogService.setToken(user.token)
       setUser(user)
       setNotification('login successful')
-      setTimeout(() => { setNotification(null) }, 5000)
+      setTimeout(() => {
+        setNotification(null)
+      }, 5000)
     } catch (exception) {
       setErrorMessage('wrong username or password')
-      setTimeout(() => { setErrorMessage(null) }, 5000)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
@@ -97,16 +121,33 @@ const App = () => {
     return (
       <>
         <h2>blogs</h2>
-        <form onSubmit={handleLogout}>{user.name} logged in <button type="submit" id="logout-button">logout</button></form>
+        <form onSubmit={handleLogout}>
+          {user.name} logged in{' '}
+          <button type="submit" id="logout-button">
+            logout
+          </button>
+        </form>
         <p></p>
-        <Togglable buttonLabel='create new blog' closeLabel='cancel' ref={addBlogFormRef}>
-          <AddBlogForm createBlog={createBlog}/>
+        <Togglable
+          buttonLabel="create new blog"
+          closeLabel="cancel"
+          ref={addBlogFormRef}
+        >
+          <AddBlogForm createBlog={createBlog} />
         </Togglable>
         <p></p>
         <div id="blog-listing">
-          {blogs.sort((a, b) => b.likes-a.likes).map(blog =>
-            <Blog key={blog.id} blog={blog} addLike={addLike} deleteBlog={deleteBlog} user={user.username} />
-          )}
+          {blogs
+            .sort((a, b) => b.likes - a.likes)
+            .map((blog) => (
+              <Blog
+                key={blog.id}
+                blog={blog}
+                addLike={addLike}
+                deleteBlog={deleteBlog}
+                user={user.username}
+              />
+            ))}
         </div>
       </>
     )
@@ -114,9 +155,9 @@ const App = () => {
 
   return (
     <div>
-      <Error message={errormessage}/>
-      <Notification message={notification}/>
-      {!user && <LoginForm loginUser={loginUser}/>}
+      <Error message={errormessage} />
+      <Notification message={notification} />
+      {!user && <LoginForm loginUser={loginUser} />}
       {user && blogViewer()}
     </div>
   )
