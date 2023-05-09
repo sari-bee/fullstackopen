@@ -6,6 +6,7 @@ import loginService from './services/login'
 import blogService from './services/blogs'
 import Notification from './components/Notification'
 import NotificationContext from './NotificationContext'
+import UserContext from './UserContext'
 import Error from './components/Error'
 import ErrorContext from './ErrorContext'
 import LoginForm from './components/LoginForm'
@@ -13,7 +14,7 @@ import AddBlogForm from './components/AddBlogForm'
 
 const App = () => {
   const queryClient = useQueryClient()
-  const [user, setUser] = useState(null)
+  const [user, userDispatch] = useContext(UserContext)
   const [errormessage, errorDispatch] = useContext(ErrorContext)
   const [notification, notificationDispatch] = useContext(NotificationContext)
   const addBlogFormRef = useRef()
@@ -66,7 +67,7 @@ const App = () => {
     const alreadyLoggedUser = window.localStorage.getItem('loggedBlogUser')
     if (alreadyLoggedUser) {
       const user = JSON.parse(alreadyLoggedUser)
-      setUser(user)
+      userDispatch({type: "USER", payload: alreadyLoggedUser})
       blogService.setToken(user.token)
     }
   }, [])
@@ -78,7 +79,7 @@ const App = () => {
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.clear()
-    setUser(null)
+    userDispatch({type: "RESET"})
     notificationDispatch({ type: "LOGOUT" })
     setTimeout(() => {
       notificationDispatch({ type: "RESET" })
@@ -115,7 +116,7 @@ const App = () => {
       const user = await loginService.login(handledUser)
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({ type: "USER", payload: user })
       notificationDispatch({ type: "LOGIN" })
       setTimeout(() => {
         notificationDispatch({ type: "RESET" })
@@ -165,6 +166,7 @@ const App = () => {
   }
 
   return (
+    <UserContext.Provider value={[user, userDispatch]}>
       <ErrorContext.Provider value={[errormessage, errorDispatch]}>
         <NotificationContext.Provider value={[notification, notificationDispatch]}>
         <div>
@@ -175,6 +177,7 @@ const App = () => {
         </div>
       </NotificationContext.Provider>
       </ErrorContext.Provider>
+    </UserContext.Provider>
   )
 }
 
