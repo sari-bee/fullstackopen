@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useReducer } from 'react'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
@@ -8,11 +8,23 @@ import Error from './components/Error'
 import LoginForm from './components/LoginForm'
 import AddBlogForm from './components/AddBlogForm'
 
+const notificationReducer = (state, action) => {
+  switch (action.type) {
+    case 'NOTIFY':
+      return state
+    default:
+      return state
+  }
+}
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(null)
   const [errormessage, setErrorMessage] = useState(null)
-  const [notification, setNotification] = useState(null)
+  const [notification, notificationDispatch] = useReducer(
+    notificationReducer,
+    null
+  )
   const addBlogFormRef = useRef()
 
   useEffect(() => {
