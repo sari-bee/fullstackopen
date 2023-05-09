@@ -1,8 +1,14 @@
 import { createContext, useReducer, useContext } from 'react'
+import blogService from './services/blogs'
 
 const userReducer = (state, action) => {
     switch (action.type) {
-      case "USER":
+      case "LOGINUSER":
+        window.localStorage.setItem('loggedBlogUser', JSON.stringify(action.payload))
+        blogService.setToken(action.payload.token)
+        return action.payload
+      case "OLDUSER":
+        blogService.setToken(action.payload.token)
         return action.payload
       case "RESET":
         return null

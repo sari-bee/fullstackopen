@@ -63,12 +63,27 @@ const App = () => {
     }
   })
 
+  const loginUserMutation = useMutation(loginService.login, {
+    onSuccess: (user) => {
+      userDispatch({ type: "LOGINUSER", payload: user })
+      notificationDispatch({ type: "LOGIN" })
+      setTimeout(() => {
+        notificationDispatch({ type: "RESET" })
+      }, 5000)
+    },
+    onError: () => {
+      errorDispatch({ type: "AUTHENTICATIONERROR" })
+      setTimeout(() => {
+        errorDispatch({ type: "RESET" })
+      }, 5000)
+    }
+  })
+
   useEffect(() => {
     const alreadyLoggedUser = window.localStorage.getItem('loggedBlogUser')
     if (alreadyLoggedUser) {
       const user = JSON.parse(alreadyLoggedUser)
-      userDispatch({type: "USER", payload: user})
-      blogService.setToken(user.token)
+      userDispatch({type: "OLDUSER", payload: user})
     }
   }, [])
 
@@ -98,7 +113,7 @@ const App = () => {
     changeBlogMutation.mutate(changedBlog)
   }
 
-  const deleteBlog = async (id) => {
+  const deleteBlog = (id) => {
     if (
       window.confirm(
         `Remove blog ${blogs.find((blog) => blog.id === id).title} by ${
@@ -111,22 +126,8 @@ const App = () => {
     }    
   }
 
-  const loginUser = async (handledUser) => {
-    try {
-      const user = await loginService.login(handledUser)
-      userDispatch({ type: "USER", payload: user })
-      window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
-      blogService.setToken(user.token)
-      notificationDispatch({ type: "LOGIN" })
-      setTimeout(() => {
-        notificationDispatch({ type: "RESET" })
-      }, 5000)
-    } catch (exception) {
-      errorDispatch({ type: "AUTHENTICATIONERROR" })
-      setTimeout(() => {
-        errorDispatch({ type: "RESET" })
-      }, 5000)
-    }
+  const loginUser = (handledUser) => {
+    loginUserMutation.mutate(handledUser)
   }
 
   const blogViewer = () => {
