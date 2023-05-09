@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from 'react'
+import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
@@ -67,7 +67,7 @@ const App = () => {
     const alreadyLoggedUser = window.localStorage.getItem('loggedBlogUser')
     if (alreadyLoggedUser) {
       const user = JSON.parse(alreadyLoggedUser)
-      userDispatch({type: "USER", payload: alreadyLoggedUser})
+      userDispatch({type: "USER", payload: user})
       blogService.setToken(user.token)
     }
   }, [])
@@ -114,9 +114,9 @@ const App = () => {
   const loginUser = async (handledUser) => {
     try {
       const user = await loginService.login(handledUser)
+      userDispatch({ type: "USER", payload: user })
       window.localStorage.setItem('loggedBlogUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      userDispatch({ type: "USER", payload: user })
       notificationDispatch({ type: "LOGIN" })
       setTimeout(() => {
         notificationDispatch({ type: "RESET" })
