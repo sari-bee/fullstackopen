@@ -1,7 +1,7 @@
 import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { Table } from 'react-bootstrap'
 import Blog from './components/Blog'
-import User from './components/User'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
@@ -138,23 +138,32 @@ const App = () => {
   const userViewer = () => {
     return (
       <>
-        <h2>blogs</h2>
+        <h3>blogs</h3>
         <form onSubmit={handleLogout}>
           {user.name} logged in{' '}
           <button type="submit" id="logout-button">
             logout
           </button>
         </form>
-        <h2>users</h2>
+        <h3>users</h3>
         <div id="user-listing">
-          {users
-            .map((u) => (
-              <User
-                key={u.id}
-                user={u}
-              />
-            ))}
-        </div>        
+          <Table striped>
+            <tbody>
+              <tr>
+                <td></td>
+                <td><b>blogs created</b></td>
+              </tr>
+              {users
+              .sort((a, b) => b.blogs.length - a.blogs.length)
+              .map(u =>
+              <tr key={u.id}>
+                <td>{u.name}</td>
+                <td>{u.blogs.length}</td>
+              </tr>
+              )}
+            </tbody>
+          </Table> 
+        </div>
       </>
     )
   }
@@ -162,7 +171,7 @@ const App = () => {
   const blogViewer = () => {
     return (
       <>
-        <h2>blogs</h2>
+        <h3>blogs</h3>
         <form onSubmit={handleLogout}>
           {user.name} logged in{' '}
           <button type="submit" id="logout-button">
@@ -199,7 +208,7 @@ const App = () => {
     <UserContext.Provider value={[user, userDispatch]}>
       <ErrorContext.Provider value={[errormessage, errorDispatch]}>
         <NotificationContext.Provider value={[notification, notificationDispatch]}>
-        <div>
+        <div className="container">
           <Error message={errormessage} />
           <Notification message={notification} />
           {!user && <LoginForm loginUser={loginUser} />}
