@@ -1,9 +1,11 @@
 import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import Blog from './components/Blog'
+import User from './components/User'
 import Togglable from './components/Togglable'
 import loginService from './services/login'
 import blogService from './services/blogs'
+import userService from './services/users'
 import Notification from './components/Notification'
 import NotificationContext from './NotificationContext'
 import UserContext from './UserContext'
@@ -87,9 +89,12 @@ const App = () => {
     }
   }, [])
 
-  const result = useQuery('blogs', blogService.getBlogs)
-  if (result.isLoading) { return <div>please wait</div> }
-  const blogs = result.data
+  const blogsResult = useQuery('blogs', blogService.getBlogs)
+  const usersResult = useQuery('users', userService.getUsers)
+  if (blogsResult.isLoading) { return <div>please wait</div> }
+  if (usersResult.isLoading) { return <div>please wait</div> }
+  const blogs = blogsResult.data
+  const users = usersResult.data
 
   const handleLogout = (event) => {
     event.preventDefault()
@@ -128,6 +133,30 @@ const App = () => {
 
   const loginUser = (handledUser) => {
     loginUserMutation.mutate(handledUser)
+  }
+
+  const userViewer = () => {
+    return (
+      <>
+        <h2>blogs</h2>
+        <form onSubmit={handleLogout}>
+          {user.name} logged in{' '}
+          <button type="submit" id="logout-button">
+            logout
+          </button>
+        </form>
+        <h2>users</h2>
+        <div id="user-listing">
+          {users
+            .map((u) => (
+              <User
+                key={u.id}
+                user={u}
+              />
+            ))}
+        </div>        
+      </>
+    )
   }
 
   const blogViewer = () => {
@@ -175,6 +204,7 @@ const App = () => {
           <Notification message={notification} />
           {!user && <LoginForm loginUser={loginUser} />}
           {user && blogViewer()}
+          {user && userViewer()}
         </div>
       </NotificationContext.Provider>
       </ErrorContext.Provider>
