@@ -1,5 +1,6 @@
 import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { Table } from 'react-bootstrap'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
@@ -208,13 +209,17 @@ const App = () => {
     <UserContext.Provider value={[user, userDispatch]}>
       <ErrorContext.Provider value={[errormessage, errorDispatch]}>
         <NotificationContext.Provider value={[notification, notificationDispatch]}>
-        <div className="container">
-          <Error message={errormessage} />
-          <Notification message={notification} />
-          {!user && <LoginForm loginUser={loginUser} />}
-          {user && blogViewer()}
-          {user && userViewer()}
-        </div>
+          <Router>
+            <div className="container">
+            <Error message={errormessage} />
+            <Notification message={notification} />
+            {!user && <LoginForm loginUser={loginUser} />}
+            <Routes>
+              <Route path="/" element={user && blogViewer()}/>
+              <Route path="/users" element={user && userViewer()}/>
+            </Routes>
+            </div>
+          </Router>
       </NotificationContext.Provider>
       </ErrorContext.Provider>
     </UserContext.Provider>
