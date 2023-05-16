@@ -14,6 +14,7 @@ import OneUserViewer from './components/OneUserViewer'
 import UserViewer from './components/UserViewer'
 import BlogViewer from './components/BlogViewer'
 import OneBlogViewer from './components/OneBlogViewer'
+import { Navbar, Nav } from 'react-bootstrap'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -164,11 +165,22 @@ const App = () => {
         <NotificationContext.Provider value={[notification, notificationDispatch]}>
           <Router>
             {user
-              ? <div className="container">
-                  <Link style={padding} to="/">blogs</Link>
-                  <Link style={padding} to="/users">users</Link>
-                  {user.name} logged in <button onClick={handleLogout}>logout</button>
-                </div>
+              ? <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
+                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                <Navbar.Collapse id="responsive-navbar-nav">
+                <Nav className="mr-auto">
+                  <Nav.Link href="#" as="span">
+                    <Link style={padding} to="/">blogs</Link>
+                  </Nav.Link>
+                  <Nav.Link href="#" as="span">
+                    <Link style={padding} to="/users">users</Link>
+                  </Nav.Link>
+                  <Nav.Link href="#" as="span">
+                    {user.name} logged in <button onClick={handleLogout}>logout</button>
+                </Nav.Link>
+                </Nav>
+                </Navbar.Collapse>
+                </Navbar>
               : <div className="container"><br/></div>
             }
             <div className="container">

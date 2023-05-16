@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 const UserViewer = ({ users }) => {
     return (
       <>
-        <h3>users</h3>
+        <h4>users</h4>
         <div>
           <Table striped>
             <tbody>

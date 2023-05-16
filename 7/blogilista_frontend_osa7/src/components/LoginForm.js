@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { Form } from 'react-bootstrap'
 
 const LoginForm = ({ loginUser }) => {
 
@@ -16,26 +17,28 @@ const LoginForm = ({ loginUser }) => {
 
   return (
     <>
-      <h2>log in to application</h2>
-      <form onSubmit={handleLogin}>
-        <div>
-          <input
+      <br/>
+      <h4>log in to application</h4>
+      <br/>
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username</Form.Label>
+          <Form.Control
             type="text"
-            id="username"
             name="username"
           />
-        </div>
-        <div>
-          <input
+          <br/>
+        <Form.Label>password</Form.Label>
+        <Form.Control
             type="password"
-            id="password"
             name="password"
-          />
-        </div>
-        <button type="submit" id="login-button">
+        />
+        <br/>
+        <button type="submit">
           login
         </button>
-      </form>
+        </Form.Group>
+      </Form>
     </>
   )
 }

@@ -11,8 +11,7 @@ const BlogViewer = ({ blogs, addBlogFormRef, createBlog }) => {
           buttonLabel="create new blog"
           closeLabel="cancel"
           ref={addBlogFormRef}
-        >
-          <AddBlogForm createBlog={createBlog} />
+        ><AddBlogForm createBlog={createBlog} />
         </Togglable>
         <p></p>
         <Table striped>

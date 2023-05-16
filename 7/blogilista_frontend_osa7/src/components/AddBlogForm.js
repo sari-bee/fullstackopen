@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { Form } from 'react-bootstrap'
 
 const AddBlogForm = ({ createBlog }) => {
 
@@ -19,36 +20,32 @@ const AddBlogForm = ({ createBlog }) => {
 
   return (
     <>
-      <h2>create new</h2>
-      <form onSubmit={handleAdd}>
-        <div>
-          title{' '}
-          <input
+      <h4>create new</h4>
+      <Form onSubmit={handleAdd}>
+        <Form.Group>
+          <Form.Label>title</Form.Label>
+          <Form.Control
             type="text"
             name="title"
-            id="title-input"
           />
-        </div>
-        <div>
-          author{' '}
-          <input
+          <br/>
+          <Form.Label>author</Form.Label>
+          <Form.Control
             type="text"
             name="author"
-            id="author-input"
           />
-        </div>
-        <div>
-          url{' '}
-          <input
+          <br/>
+          <Form.Label>url</Form.Label>
+          <Form.Control
             type="text"
             name="url"
-            id="url-input"
           />
-        </div>
-        <button type="submit" id="submit-button">
+          <br/>
+        <button type="submit">
           create
         </button>
-      </form>
+        </Form.Group>
+      </Form>
     </>
   )
 }

@@ -39,9 +39,10 @@ Table {
 button {
   color: black;
   background-color: white;
+  border-color: black;
   font-family: 'Courier New', Courier, monospace;
-  border: 1px;
-  border-style: groove;
+  border: 1px ;
+  border-style: solid;
 }
 
 .blogStyle {
