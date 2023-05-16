@@ -38,6 +38,22 @@ const App = () => {
     }
   })
 
+  const newCommentMutation = useMutation(blogService.addComment, {
+    onSuccess: (newComment) => {
+      queryClient.invalidateQueries('blogs')
+      notificationDispatch({ type: "ADDCOMMENT" })
+      setTimeout(() => {
+        notificationDispatch({ type: "RESET" })
+      }, 5000)
+    },
+    onError: () => {
+      errorDispatch({ type: "COMMENTERROR" })
+      setTimeout(() => {
+        errorDispatch({ type: "RESET" })
+      }, 5000)
+    }
+  })
+
   const changeBlogMutation = useMutation(blogService.addLike, {
     onSuccess: () => {
       queryClient.invalidateQueries('blogs')
@@ -114,6 +130,10 @@ const App = () => {
     newBlogMutation.mutate(blog)
   }
 
+  const addComment = async (comment) => {
+    newCommentMutation.mutate(comment)
+  }
+
   const addLike = async (id) => {
     const blog = blogs.find((b) => b.id === id)
     const newLikes = blog.likes + 1
@@ -159,7 +179,7 @@ const App = () => {
               <Route path="/" element={user ? <BlogViewer blogs={blogs} user={user} addBlogFormRef={addBlogFormRef} createBlog={createBlog} addLike={addLike} deleteBlog={deleteBlog}/>  : <Navigate replace to="/login"/>}/>
               <Route path="/users" element={user ? <UserViewer users={users}/> : <Navigate replace to="/login"/>}/>
               <Route path="/users/:id" element={user ? <OneUserViewer users={users}/> : <Navigate replace to="/login"/>}/>
-              <Route path="/blogs/:id" element={user ? <OneBlogViewer blogs={blogs} user={user} addLike={addLike} deleteBlog={deleteBlog}/> : <Navigate replace to="/login"/>}/>
+              <Route path="/blogs/:id" element={user ? <OneBlogViewer blogs={blogs} user={user} addLike={addLike} deleteBlog={deleteBlog} addComment={addComment}/> : <Navigate replace to="/login"/>}/>
               <Route path="/login" element={user ? <Navigate replace to="/"/> : <LoginForm loginUser={loginUser} />}/>
             </Routes>
             </div>

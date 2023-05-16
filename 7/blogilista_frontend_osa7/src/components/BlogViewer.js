@@ -3,7 +3,7 @@ import AddBlogForm from './AddBlogForm'
 import { Table } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 
-const BlogViewer = ({ blogs, user, addBlogFormRef, createBlog, addLike, deleteBlog }) => {
+const BlogViewer = ({ blogs, addBlogFormRef, createBlog }) => {
     return (
       <>
         <p></p>

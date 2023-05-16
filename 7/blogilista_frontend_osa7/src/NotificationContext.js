@@ -10,6 +10,8 @@ const notificationReducer = (state, action) => {
         return `added ${action.payload.title} by ${action.payload.author}`
       case "DELETE":
         return 'blog deleted'
+      case "ADDCOMMENT":
+        return 'comment added'
       case "RESET":
         return null
       default:

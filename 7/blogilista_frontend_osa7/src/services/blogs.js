@@ -12,6 +12,12 @@ const addNew = async (newBlog) => {
   return response.data
 }
 
+const addComment = async (comment) => {
+  const newComment = { "content" : comment.content }
+  const response = await axios.post(`${baseUrl}/${comment.id}/comments`, newComment)
+  return response.data
+}
+
 const addLike = async (changedBlog) => {
   const response = await axios.put(`${baseUrl}/${changedBlog.id}`, changedBlog)
   return response.data
@@ -28,4 +34,4 @@ const getBlogs = async () => {
   return response.data
 }
 
-export default { addNew, setToken, addLike, deleteOne, getBlogs }
+export default { addNew, setToken, addLike, deleteOne, getBlogs, addComment }

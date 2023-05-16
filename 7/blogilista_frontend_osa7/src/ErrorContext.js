@@ -10,6 +10,8 @@ const errorReducer = (state, action) => {
         return 'adding like failed'
       case "DELETEERROR":
         return 'deleting blog failed'
+      case "COMMENTERROR":
+        return 'error adding comment'
       case "RESET":
         return null
       default:
