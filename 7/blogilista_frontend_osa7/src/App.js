@@ -151,7 +151,7 @@ const App = () => {
               <Route path="/" element={user && <BlogViewer blogs={blogs} user={user} addBlogFormRef={addBlogFormRef} createBlog={createBlog} addLike={addLike} deleteBlog={deleteBlog}/>}/>
               <Route path="/users" element={user && <UserViewer users={users}/>}/>
               <Route path="/users/:id" element={user && <OneUserViewer users={users}/>}/>
-              <Route path="/blogs/:id" element={user && <OneBlogViewer blogs={blogs}/>}/>
+              <Route path="/blogs/:id" element={user && <OneBlogViewer blogs={blogs} user={user} addLike={addLike} deleteBlog={deleteBlog}/>}/>
             </Routes>
             </div>
           </Router>
