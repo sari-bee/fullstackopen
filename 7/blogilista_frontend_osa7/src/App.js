@@ -1,6 +1,6 @@
 import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom'
 import { Table } from 'react-bootstrap'
 import Blog from './components/Blog'
 import Togglable from './components/Togglable'
@@ -136,7 +136,7 @@ const App = () => {
     loginUserMutation.mutate(handledUser)
   }
 
-  const userViewer = () => {
+  const LogoutUserViewer = () => {
     return (
       <>
         <h3>blogs</h3>
@@ -146,8 +146,35 @@ const App = () => {
             logout
           </button>
         </form>
+        <p></p>
+      </>
+    )
+  }
+
+  const OneUserViewer = () => {
+    const id = useParams().id
+    const us = users.find(u => u.id === id)
+    return (
+      <div>
+        <h3>{us.name}</h3>
+        <p></p>
+        <h6><b>added blogs</b></h6>
+        <Table striped>
+          <tbody>
+            <tr><td>blog</td></tr>
+            <tr><td>another blog</td></tr>
+            <tr><td>third blog</td></tr>
+          </tbody>
+        </Table>
+      </div>
+    )
+  }
+
+  const UserViewer = () => {
+    return (
+      <>
         <h3>users</h3>
-        <div id="user-listing">
+        <div>
           <Table striped>
             <tbody>
               <tr>
@@ -158,7 +185,7 @@ const App = () => {
               .sort((a, b) => b.blogs.length - a.blogs.length)
               .map(u =>
               <tr key={u.id}>
-                <td>{u.name}</td>
+                <td><Link to={`/users/${u.id}`}>{u.name}</Link></td>
                 <td>{u.blogs.length}</td>
               </tr>
               )}
@@ -169,16 +196,9 @@ const App = () => {
     )
   }
 
-  const blogViewer = () => {
+  const BlogViewer = () => {
     return (
       <>
-        <h3>blogs</h3>
-        <form onSubmit={handleLogout}>
-          {user.name} logged in{' '}
-          <button type="submit" id="logout-button">
-            logout
-          </button>
-        </form>
         <p></p>
         <Togglable
           buttonLabel="create new blog"
@@ -214,9 +234,11 @@ const App = () => {
             <Error message={errormessage} />
             <Notification message={notification} />
             {!user && <LoginForm loginUser={loginUser} />}
+            {user && <LogoutUserViewer/>}
             <Routes>
-              <Route path="/" element={user && blogViewer()}/>
-              <Route path="/users" element={user && userViewer()}/>
+              <Route path="/" element={user && <BlogViewer/>}/>
+              <Route path="/users" element={user && <UserViewer/>}/>
+              <Route path="/users/:id" element={user && <OneUserViewer/>}/>
             </Routes>
             </div>
           </Router>
