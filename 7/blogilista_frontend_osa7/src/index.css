@@ -28,6 +28,11 @@ a {
   text-align: center;
 }
 
+.menu {
+  white-space: nowrap;
+  display: inline;
+}
+
 button {
   color: black;
   background-color: white;

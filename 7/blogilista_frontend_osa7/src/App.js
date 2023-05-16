@@ -1,6 +1,6 @@
 import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'
 import loginService from './services/login'
 import blogService from './services/blogs'
 import userService from './services/users'
@@ -13,7 +13,6 @@ import LoginForm from './components/LoginForm'
 import OneUserViewer from './components/OneUserViewer'
 import UserViewer from './components/UserViewer'
 import BlogViewer from './components/BlogViewer'
-import LogoutUserViewer from './components/LogoutUserViewer'
 import OneBlogViewer from './components/OneBlogViewer'
 
 const App = () => {
@@ -98,6 +97,8 @@ const App = () => {
   const blogs = blogsResult.data
   const users = usersResult.data
 
+  const padding = { padding: 5 }
+
   const handleLogout = (event) => {
     event.preventDefault()
     window.localStorage.clear()
@@ -142,16 +143,24 @@ const App = () => {
       <ErrorContext.Provider value={[errormessage, errorDispatch]}>
         <NotificationContext.Provider value={[notification, notificationDispatch]}>
           <Router>
+            {user
+              ? <div className="container">
+                  <Link style={padding} to="/">blogs</Link>
+                  <Link style={padding} to="/users">users</Link>
+                  {user.name} logged in <button onClick={handleLogout}>logout</button>
+                </div>
+              : <div className="container"><br/></div>
+            }
             <div className="container">
             <Error message={errormessage} />
             <Notification message={notification} />
-            {!user && <LoginForm loginUser={loginUser} />}
-            {user && <LogoutUserViewer handleLogout={handleLogout} user={user}/>}
+            <h3>blogs</h3>
             <Routes>
-              <Route path="/" element={user && <BlogViewer blogs={blogs} user={user} addBlogFormRef={addBlogFormRef} createBlog={createBlog} addLike={addLike} deleteBlog={deleteBlog}/>}/>
-              <Route path="/users" element={user && <UserViewer users={users}/>}/>
-              <Route path="/users/:id" element={user && <OneUserViewer users={users}/>}/>
-              <Route path="/blogs/:id" element={user && <OneBlogViewer blogs={blogs} user={user} addLike={addLike} deleteBlog={deleteBlog}/>}/>
+              <Route path="/" element={user ? <BlogViewer blogs={blogs} user={user} addBlogFormRef={addBlogFormRef} createBlog={createBlog} addLike={addLike} deleteBlog={deleteBlog}/>  : <Navigate replace to="/login"/>}/>
+              <Route path="/users" element={user ? <UserViewer users={users}/> : <Navigate replace to="/login"/>}/>
+              <Route path="/users/:id" element={user ? <OneUserViewer users={users}/> : <Navigate replace to="/login"/>}/>
+              <Route path="/blogs/:id" element={user ? <OneBlogViewer blogs={blogs} user={user} addLike={addLike} deleteBlog={deleteBlog}/> : <Navigate replace to="/login"/>}/>
+              <Route path="/login" element={user ? <Navigate replace to="/"/> : <LoginForm loginUser={loginUser} />}/>
             </Routes>
             </div>
           </Router>

@@ -6,12 +6,12 @@ const LoginForm = ({ loginUser }) => {
     event.preventDefault()
     const username = event.target.username.value
     const password = event.target.password.value
+    event.target.username.value = ''
+    event.target.password.value = ''
     loginUser({
       username: username,
       password: password,
     })
-    event.target.username.value = ''
-    event.target.password.value = ''
   }
 
   return (
