@@ -1,6 +1,8 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const OneBlogViewer = ({ blogs, user, addLike, deleteBlog }) => {
+
+  const navigate = useNavigate()
 
   const handleAddLike = (event) => {
     event.preventDefault()
@@ -10,6 +12,7 @@ const OneBlogViewer = ({ blogs, user, addLike, deleteBlog }) => {
   const handleDelete = (event) => {
     event.preventDefault()
     deleteBlog(bl.id)
+    navigate('/')
   }
 
   const deleteButton = () => {

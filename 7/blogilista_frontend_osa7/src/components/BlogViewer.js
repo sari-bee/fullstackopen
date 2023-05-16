@@ -1,6 +1,7 @@
-import Blog from './Blog'
 import Togglable from './Togglable'
 import AddBlogForm from './AddBlogForm'
+import { Table } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 
 const BlogViewer = ({ blogs, user, addBlogFormRef, createBlog, addLike, deleteBlog }) => {
     return (
@@ -14,19 +15,17 @@ const BlogViewer = ({ blogs, user, addBlogFormRef, createBlog, addLike, deleteBl
           <AddBlogForm createBlog={createBlog} />
         </Togglable>
         <p></p>
-        <div id="blog-listing">
-          {blogs
+        <Table striped>
+          <tbody>
+            {blogs
             .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                addLike={addLike}
-                deleteBlog={deleteBlog}
-                user={user.username}
-              />
-            ))}
-        </div>
+            .map(blog =>
+            <tr key={blog.id}>
+              <td><Link to={`/blogs/${blog.id}`}>{blog.title} by {blog.author}</Link></td>
+            </tr>
+            )}
+          </tbody>
+        </Table> 
       </>
     )
   }
