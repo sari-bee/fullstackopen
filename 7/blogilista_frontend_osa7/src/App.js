@@ -1,9 +1,6 @@
 import { useEffect, useContext, useRef } from 'react'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
-import { BrowserRouter as Router, Routes, Route, Link, useParams } from 'react-router-dom'
-import { Table } from 'react-bootstrap'
-import Blog from './components/Blog'
-import Togglable from './components/Togglable'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import loginService from './services/login'
 import blogService from './services/blogs'
 import userService from './services/users'
@@ -13,7 +10,11 @@ import UserContext from './UserContext'
 import Error from './components/Error'
 import ErrorContext from './ErrorContext'
 import LoginForm from './components/LoginForm'
-import AddBlogForm from './components/AddBlogForm'
+import OneUserViewer from './components/OneUserViewer'
+import UserViewer from './components/UserViewer'
+import BlogViewer from './components/BlogViewer'
+import LogoutUserViewer from './components/LogoutUserViewer'
+import OneBlogViewer from './components/OneBlogViewer'
 
 const App = () => {
   const queryClient = useQueryClient()
@@ -136,95 +137,6 @@ const App = () => {
     loginUserMutation.mutate(handledUser)
   }
 
-  const LogoutUserViewer = () => {
-    return (
-      <>
-        <h3>blogs</h3>
-        <form onSubmit={handleLogout}>
-          {user.name} logged in{' '}
-          <button type="submit" id="logout-button">
-            logout
-          </button>
-        </form>
-        <p></p>
-      </>
-    )
-  }
-
-  const OneUserViewer = () => {
-    const id = useParams().id
-    const us = users.find(u => u.id === id)
-    return (
-      <div>
-        <h3>{us.name}</h3>
-        <p></p>
-        <h6><b>added blogs</b></h6>
-        <Table striped>
-          <tbody>
-            <tr><td>blog</td></tr>
-            <tr><td>another blog</td></tr>
-            <tr><td>third blog</td></tr>
-          </tbody>
-        </Table>
-      </div>
-    )
-  }
-
-  const UserViewer = () => {
-    return (
-      <>
-        <h3>users</h3>
-        <div>
-          <Table striped>
-            <tbody>
-              <tr>
-                <td></td>
-                <td><b>blogs created</b></td>
-              </tr>
-              {users
-              .sort((a, b) => b.blogs.length - a.blogs.length)
-              .map(u =>
-              <tr key={u.id}>
-                <td><Link to={`/users/${u.id}`}>{u.name}</Link></td>
-                <td>{u.blogs.length}</td>
-              </tr>
-              )}
-            </tbody>
-          </Table> 
-        </div>
-      </>
-    )
-  }
-
-  const BlogViewer = () => {
-    return (
-      <>
-        <p></p>
-        <Togglable
-          buttonLabel="create new blog"
-          closeLabel="cancel"
-          ref={addBlogFormRef}
-        >
-          <AddBlogForm createBlog={createBlog} />
-        </Togglable>
-        <p></p>
-        <div id="blog-listing">
-          {blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                addLike={addLike}
-                deleteBlog={deleteBlog}
-                user={user.username}
-              />
-            ))}
-        </div>
-      </>
-    )
-  }
-
   return (
     <UserContext.Provider value={[user, userDispatch]}>
       <ErrorContext.Provider value={[errormessage, errorDispatch]}>
@@ -234,11 +146,12 @@ const App = () => {
             <Error message={errormessage} />
             <Notification message={notification} />
             {!user && <LoginForm loginUser={loginUser} />}
-            {user && <LogoutUserViewer/>}
+            {user && <LogoutUserViewer handleLogout={handleLogout} user={user}/>}
             <Routes>
-              <Route path="/" element={user && <BlogViewer/>}/>
-              <Route path="/users" element={user && <UserViewer/>}/>
-              <Route path="/users/:id" element={user && <OneUserViewer/>}/>
+              <Route path="/" element={user && <BlogViewer blogs={blogs} user={user} addBlogFormRef={addBlogFormRef} createBlog={createBlog} addLike={addLike} deleteBlog={deleteBlog}/>}/>
+              <Route path="/users" element={user && <UserViewer users={users}/>}/>
+              <Route path="/users/:id" element={user && <OneUserViewer users={users}/>}/>
+              <Route path="/blogs/:id" element={user && <OneBlogViewer blogs={blogs}/>}/>
             </Routes>
             </div>
           </Router>
