@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom'
+import { Table } from 'react-bootstrap'
 
 const OneBlogViewer = ({ blogs, user, addLike, deleteBlog }) => {
 
@@ -38,6 +39,18 @@ const OneBlogViewer = ({ blogs, user, addLike, deleteBlog }) => {
         {bl.likes} likes  <button onClick={handleAddLike}>like</button><br/>
         added by {bl.user.name}<br/>
         {deleteButton()}</p>
+        <h5>comments</h5>
+        {bl.comments.length === 0 && <p>no comments yet :(</p>}
+        {bl.comments.length > 0 &&
+          <Table striped>
+          <tbody>
+            {bl.comments
+            .map(c =>
+            <tr key={c.id}><td>{c.content}</td></tr>
+            )}
+          </tbody>
+          </Table>
+        }
       </div>
     )
   }

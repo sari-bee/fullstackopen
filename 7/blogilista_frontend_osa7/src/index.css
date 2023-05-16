@@ -1,10 +1,14 @@
 body {
   font-family: 'Courier New', Courier, monospace;
   font-size: smaller;
-}
+} 
 
 a {
-  color: navy;
+  color: black;
+}
+
+a:hover {
+  color: salmon
 }
 
 .notification {
@@ -21,16 +25,15 @@ a {
   border-width: 2px;
   border-style: dashed;
   border-color: black;
-  color: red;
+  color: salmon;
   font-size: 16px;
   padding: 5px;
   margin-bottom: 20px;
   text-align: center;
 }
 
-.menu {
-  white-space: nowrap;
-  display: inline;
+Table {
+  background-color: white;
 }
 
 button {
