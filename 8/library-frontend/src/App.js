@@ -2,9 +2,25 @@ import { useState } from 'react'
 import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
+import EditAuthor from './components/EditAuthor'
+
+const Error = ({ errormessage }) => {
+  if (!errormessage) {
+    return null
+  }
+  return (
+    <div style={{color: 'red'}}>{errormessage}</div>
+  )
+}
 
 const App = () => {
   const [page, setPage] = useState('authors')
+  const [errormessage, setErrormessage] = useState(null)
+
+  const error = (message) => {
+    setErrormessage(message)
+    setTimeout(() => { setErrormessage(null) }, 5000)
+  }
 
   return (
     <div>
@@ -12,13 +28,13 @@ const App = () => {
         <button onClick={() => setPage('authors')}>authors</button>
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
+        <button onClick={() => setPage('editauthor')}>set birthyear</button>
       </div>
-
-      <Authors show={page === 'authors'}/>
-
+      <Error errormessage={errormessage}/>
+      <Authors show={page === 'authors'} />
       <Books show={page === 'books'} />
-
-      <NewBook show={page === 'add'} />
+      <NewBook show={page === 'add'} setError={error} />
+      <EditAuthor show={page === 'editauthor'} />
     </div>
   )
 }
