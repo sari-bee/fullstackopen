@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
 
 const EditAuthor = (props) => {
@@ -9,6 +9,12 @@ const EditAuthor = (props) => {
   const [ EditAuthor ] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [ { query: ALL_AUTHORS } ]
   })
+
+  const result = useQuery(ALL_AUTHORS)
+  if (result.loading) {
+    return <div>loading</div>
+  }
+  const authors=result.data.allAuthors
 
   if (!props.show) {
     return null
@@ -27,10 +33,12 @@ const EditAuthor = (props) => {
       <form onSubmit={submit}>
         <div>
           name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
-          />
+          <select value={name} onChange={({ target }) => setName(target.value)}>
+            <option key="default" value="default"> </option>
+            {authors.map((a) => (
+              <option key={a.name} value={a.name}>{a.name}</option>
+            ))}
+          </select>
         </div>
         <div>
           born
