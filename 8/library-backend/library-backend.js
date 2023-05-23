@@ -81,6 +81,30 @@ const resolvers = {
   },
   Mutation: {
       addBook: async (root, args) => {
+        if (args.title.length < 5) {
+          throw new GraphQLError('Title must be at least 5 characters', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.title
+            }
+          })
+        }
+        if (args.author.length < 4) {
+          throw new GraphQLError('Author name must be at least 4 characters', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author
+            }
+          })
+        }
+        if (!args.published) {
+          throw new GraphQLError('Publishing year missing', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.published
+            }
+          })
+        }
         const existingBook = await Book.findOne({ title: args.title })
         if (!existingBook) {
           let author = await Author.findOne({ name: args.author })
