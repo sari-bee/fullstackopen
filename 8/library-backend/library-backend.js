@@ -50,53 +50,68 @@ const typeDefs = `
 
 const resolvers = {
   Query: {
-    bookCount: async () => Book.collection.countDocuments(),
-    authorCount: async () => Author.collection.countDocuments(),
-    allAuthors: async () => { return Author.find({}) },
+    bookCount: async () => await Book.collection.countDocuments(),
+    authorCount: async () => await Author.collection.countDocuments(),
+    allAuthors: async () => { return await Author.find({}) },
     allBooks: async (root, args) => {
-//      if (args.author && args.genre) {
-//          return books.filter(b => (b.author === args.author && b.genres.includes(args.genre)))
-//      }
-//      if (args.author) {
-//        return books.filter(b => b.author === args.author)
-//      }
-//      if (args.genre) {
-//        return books.filter(b => b.genres.includes(args.genre))
-//      }
+      if (args.author && args.genre) {
+        const author = await Author.findOne({ name: args.author })
+        return Book.find( {'genres': args.genre, author: author} )
+      }
+      if (args.author) {
+        const author = await Author.findOne({ name: args.author })
+        return Book.find({ author: author })
+      }
+      if (args.genre) {
+        return Book.find( {'genres': args.genre} )
+      }
       return await Book.find({})
     },
-    findAuthor: async (root, args) => Author.findOne({ name: args.name }),
+    findAuthor: async (root, args) => await Author.findOne({ name: args.name })
   },
-//  Author: {
-//    bookCount: (root) => books.filter(b => b.author === root.name).length
-//  },
+  Author: {
+    bookCount: async (root) => {
+      const author = await Author.findOne({ name: root.name })
+      const books = await Book.find({ author: author.id })
+      return books.length
+    },
+  },
+  Book: {
+    author: async (root) => await Author.findById(root.author)
+  },
   Mutation: {
       addBook: async (root, args) => {
-//        if (books.find(b => b.title === args.title)) {
-//          throw new GraphQLError('Title must be unique', {
-//            extensions: {
-//              code: 'BAD_USER_INPUT',
-//              invalidArgs: args.title
-//            }
-//          })
-//        }
-        let author = await Author.findOne({ name: args.author })
-        if (!author) {
-          author = new Author({ name: args.author })
-          await author.save()
-        }
-        const book = new Book({ ...args, author: author })
-        return book.save()
+        const existingBook = await Book.findOne({ title: args.title })
+        if (!existingBook) {
+          let author = await Author.findOne({ name: args.author })
+          if (!author) {
+            author = new Author({ name: args.author })
+            await author.save()
+          }
+          const book = new Book({ ...args, author: author })
+          return book.save()
+        } else {
+          throw new GraphQLError('Title must be unique', {
+              extensions: {
+                code: 'BAD_USER_INPUT',
+                invalidArgs: args.title
+              }
+            })
+          }
       },
-//      editAuthor: (root, args) => {
-//        const author = authors.find(a => a.name === args.name)
-//        if (!author) {
-//            return null
-//        }
-//        const updatedAuthor = { ...author, born: args.setBornTo }
-//        authors = authors.map(a => a.name === args.name ? updatedAuthor : a)
-//        return updatedAuthor
-//      }
+      editAuthor: async (root, args) => {
+        const author = await Author.findOne({ name: args.name })
+        if (!author) {
+          throw new GraphQLError('Author not found', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.name
+            }
+          })
+        }
+        author.born = args.setBornTo
+        return author.save()
+      }
   }
 }
 
