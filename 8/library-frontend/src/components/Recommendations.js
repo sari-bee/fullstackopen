@@ -21,7 +21,6 @@ const Recommendations = (props) => {
       <div>
         <h2>recommendations</h2>
         <p>Books in your favorite genre <b>{favoritegenre}</b></p>
-
         <p>no books for you :(</p>
       </div>
     )
