@@ -4,7 +4,8 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import EditAuthor from './components/EditAuthor'
 import LoginForm from './components/LoginForm'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useQuery } from '@apollo/client'
+import { ALL_BOOKS } from './queries'
 
 const Error = ({ errormessage }) => {
   if (!errormessage) {
@@ -16,7 +17,7 @@ const Error = ({ errormessage }) => {
 }
 
 const App = () => {
-  const [page, setPage] = useState('authors')
+  const [page, setPage] = useState('books')
   const [errormessage, setErrormessage] = useState(null)
   const [token, setToken] = useState(null)
   const client = useApolloClient()
@@ -32,6 +33,12 @@ const App = () => {
     client.resetStore()
   }
 
+  const result = useQuery(ALL_BOOKS)
+  if (result.loading) {
+    return <div>loading</div>
+  }
+  const books = result.data.allBooks
+
   if (!token) {
     return (
       <div>
@@ -42,7 +49,7 @@ const App = () => {
         </div>
         <Error errormessage={errormessage}/>
         <Authors show={page === 'authors'} />
-        <Books show={page === 'books'} />
+        <Books show={page === 'books'} books={books}/>
         <LoginForm show={page === 'login'} setError={error} setToken={setToken} />
       </div>
     )
@@ -59,7 +66,7 @@ const App = () => {
       </div>
       <Error errormessage={errormessage}/>
       <Authors show={page === 'authors'} />
-      <Books show={page === 'books'} />
+      <Books show={page === 'books'} books={books}/>
       <NewBook show={page === 'add'} setError={error} />
       <EditAuthor show={page === 'editauthor'} />
     </div>
