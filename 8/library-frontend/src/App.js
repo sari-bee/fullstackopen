@@ -6,7 +6,7 @@ import EditAuthor from './components/EditAuthor'
 import LoginForm from './components/LoginForm'
 import Recommendations from './components/Recommendations'
 import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
-import { ALL_BOOKS, BOOK_ADDED } from './queries'
+import { ALL_BOOKS, BOOK_ADDED, ALL_AUTHORS } from './queries'
 
 const Error = ({ errormessage }) => {
   if (!errormessage) {
@@ -36,8 +36,10 @@ const App = () => {
   }
 
   useSubscription(BOOK_ADDED, {
-    onData: ({ data }) => {
-      window.alert(`New book ${data.data.bookAdded.title} has been added`)
+    onData: async ({ data }) => {
+      const addedBook = data.data.bookAdded
+      window.alert(`New book ${addedBook.title} has been added`)
+      await client.refetchQueries({ include: [ALL_AUTHORS, ALL_BOOKS] })
     }
   })
 
