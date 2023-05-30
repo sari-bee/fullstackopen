@@ -13,6 +13,9 @@ const LoginForm = (props) => {
   })
 
   useEffect(() => {
+    if(result.loading) {
+      return <div>loading</div>
+    }
     if (result.data) {
       const token = result.data.login.value
       props.setToken(token)

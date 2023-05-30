@@ -5,7 +5,7 @@ import { BOOKS_BY_GENRE } from '../queries'
 const Books = (props) => {
   const [genreToSearch, setGenreToSearch] = useState(null)
   const books = props.books
-  const genres = books.flatMap(b => b.genres)
+  const genres = Array.from(new Set(books.flatMap(b => b.genres)))
 
   const resultByGenre = useQuery(BOOKS_BY_GENRE, {
     variables: { genre: genreToSearch },
