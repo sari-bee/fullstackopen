@@ -3,6 +3,8 @@ import Authors from './components/Authors'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 import EditAuthor from './components/EditAuthor'
+import LoginForm from './components/LoginForm'
+import { useApolloClient } from '@apollo/client'
 
 const Error = ({ errormessage }) => {
   if (!errormessage) {
@@ -16,10 +18,34 @@ const Error = ({ errormessage }) => {
 const App = () => {
   const [page, setPage] = useState('authors')
   const [errormessage, setErrormessage] = useState(null)
+  const [token, setToken] = useState(null)
+  const client = useApolloClient()
 
   const error = (message) => {
     setErrormessage(message)
     setTimeout(() => { setErrormessage(null) }, 5000)
+  }
+
+  const logout = () => {
+    setToken(null)
+    localStorage.clear()
+    client.resetStore()
+  }
+
+  if (!token) {
+    return (
+      <div>
+        <div>
+          <button onClick={() => setPage('authors')}>authors</button>
+          <button onClick={() => setPage('books')}>books</button>
+          <button onClick={() => setPage('login')}>login</button>
+        </div>
+        <Error errormessage={errormessage}/>
+        <Authors show={page === 'authors'} />
+        <Books show={page === 'books'} />
+        <LoginForm show={page === 'login'} setError={error} setToken={setToken} />
+      </div>
+    )
   }
 
   return (
@@ -29,6 +55,7 @@ const App = () => {
         <button onClick={() => setPage('books')}>books</button>
         <button onClick={() => setPage('add')}>add book</button>
         <button onClick={() => setPage('editauthor')}>set birthyear</button>
+        <button onClick={logout}>logout</button>
       </div>
       <Error errormessage={errormessage}/>
       <Authors show={page === 'authors'} />
