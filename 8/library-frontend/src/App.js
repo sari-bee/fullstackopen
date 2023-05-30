@@ -5,8 +5,8 @@ import NewBook from './components/NewBook'
 import EditAuthor from './components/EditAuthor'
 import LoginForm from './components/LoginForm'
 import Recommendations from './components/Recommendations'
-import { useApolloClient, useQuery } from '@apollo/client'
-import { ALL_BOOKS } from './queries'
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client'
+import { ALL_BOOKS, BOOK_ADDED } from './queries'
 
 const Error = ({ errormessage }) => {
   if (!errormessage) {
@@ -34,6 +34,12 @@ const App = () => {
     localStorage.clear()
     client.resetStore()
   }
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      window.alert(`New book ${data.data.bookAdded.title} has been added`)
+    }
+  })
 
   const result = useQuery(ALL_BOOKS)
   if (result.loading) {
