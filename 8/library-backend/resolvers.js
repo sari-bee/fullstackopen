@@ -30,13 +30,6 @@ const resolvers = {
       me: (root, args, context) => {
         return context.currentUser }
     },
-    Author: {
-      bookCount: async (root, args, context) => {
-        const author = await Author.findOne({ name: root.name })
-        const books = await Book.find({ author: author.id })
-        return books.length
-      },
-    },
     Book: {
       author: async (root, args, context) => await Author.findById(root.author)
     },
@@ -78,7 +71,11 @@ const resolvers = {
           if (!existingBook) {
             let author = await Author.findOne({ name: args.author })
             if (!author) {
-              author = new Author({ name: args.author })
+              author = new Author({ name: args.author, bookCount: 1 })
+              await author.save()
+            } else {
+              const oldBookCount = author.bookCount
+              author.bookCount = oldBookCount+1
               await author.save()
             }
             const book = new Book({ ...args, author: author })
