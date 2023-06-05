@@ -1,3 +1,8 @@
+interface ExerciseValues {
+    value1: number;
+    value2: number[];
+}
+
 interface Result {
     periodLength: number;
     trainingDays: number;
@@ -8,7 +13,26 @@ interface Result {
     average: number;
 }
 
-const calculateExercises = (hours: Array<number>, target: number): Result => {
+const parseExerciseArguments = (args: string[]): ExerciseValues => {
+    if (args.length < 4) throw new Error('Not enough arguments');
+    if(!isNaN(Number(args[2])) && !isNaN(Number(args[3]))) {
+        const c = []
+        for (let k = 3; k < args.length; k++) {
+            if(isNaN(Number(args[k]))) {
+                throw new Error('Provided values are not numbers')
+            }
+            c[k-3] = Number(args[k])
+        };
+        return {
+            value1: Number(args[2]),
+            value2: c
+        }
+    } else {
+        throw new Error('Provided values are not numbers');
+    }
+}
+
+const calculateExercises = (target: number, hours: number[]): Result => {
     let trainingDays = 0;
     for (let i = 0; i < hours.length; i++) {
         if (hours[i] > 0) {
@@ -44,6 +68,15 @@ const calculateExercises = (hours: Array<number>, target: number): Result => {
         average: average,
     }
     return res
-}
+};
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+try {
+    const { value1, value2 } = parseExerciseArguments(process.argv);
+    console.log(calculateExercises(value1, value2))
+} catch (error: unknown) {
+    let errorMessage = 'Something bad happened'
+    if (error instanceof Error) {
+        errorMessage = 'Error: ' + error.message;
+    }
+    console.log(errorMessage);
+}
