@@ -32,7 +32,7 @@ const parseExerciseArguments = (args: string[]): ExerciseValues => {
     }
 };
 
-const calculateExercises = (target: number, hours: number[]): Result => {
+export const calculateExercises = (target: number, hours: number[]): Result => {
     let trainingDays = 0;
     for (let i = 0; i < hours.length; i++) {
         if (hours[i] > 0) {
