@@ -4,7 +4,7 @@ import { v1 as uuid } from 'uuid';
 
 const patients: PatientWithoutSsn[] = patientData.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id, name, dateOfBirth, gender, occupation
-}));
+})) as PatientWithoutSsn[];
 
 const getPatients = (): PatientWithoutSsn[] => {
     return patients;
