@@ -1,4 +1,5 @@
 import express from 'express';
+import diagnosisRouter from './routes/diagnoses';
 const app = express();
 app.use(express.json());
 const cors = require('cors')
@@ -9,6 +10,8 @@ const PORT = 3001;
 app.get('/api/ping', (_req, res) => {
     res.send('pong');
 });
+
+app.use('/api/diagnoses', diagnosisRouter);
 
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
