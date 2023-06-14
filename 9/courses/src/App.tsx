@@ -33,6 +33,9 @@ interface ContentProps { courseParts: CoursePart[] }
 interface ContentProp { coursePart: CoursePart }
 interface TotalProps { courseParts: CoursePart[] }
 
+const assertNever = (value: never): never => {
+  throw new Error(`Unhandled discriminated union member: ${JSON.stringify(value)}`);};
+
 const Part = (props: ContentProp) => {
   switch(props.coursePart.kind) {
     case "basic":
@@ -64,7 +67,9 @@ const Part = (props: ContentProp) => {
           <i>{props.coursePart.description}</i><br/>
           requirements: {props.coursePart.requirements.map(req => req + " ")}</p>
         </>
-    )
+      )
+    default:
+      return assertNever(props.coursePart);
   }
 };
 
