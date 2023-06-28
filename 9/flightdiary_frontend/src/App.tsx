@@ -9,11 +9,6 @@ interface Entry {
   comment: string,
 }
 
-interface ValidationError {
-  message: string;
-  errors: Record<string, string[]>
-}
-
 const App = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [newDate, setNewDate] = useState('');
