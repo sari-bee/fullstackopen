@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface Entry {
   id: number,
@@ -9,12 +9,18 @@ interface Entry {
   comment: string,
 }
 
+interface ValidationError {
+  message: string;
+  errors: Record<string, string[]>
+}
+
 const App = () => {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [newDate, setNewDate] = useState('');
   const [newWeather, setNewWeather] = useState('');
   const [newVisibility, setNewVisibility] = useState('');
   const [newComment, setNewComment] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     axios.get<Entry[]>('http://localhost:3001/api/diaries').then(response => {
@@ -22,15 +28,27 @@ const App = () => {
     });
   }, [])
 
-  const entryCreator = (event: React.SyntheticEvent) => {
+  const entryCreator = async (event: React.SyntheticEvent) => {
     event.preventDefault()
-    axios.post<Entry>('http://localhost:3001/api/diaries', { 
-      date: newDate,
-      weather: newWeather,
-      visibility: newVisibility,
-      comment: newComment
-    })
-    .then(response => { setEntries(entries.concat(response.data)) });
+    try {
+      const response = await axios.post<Entry>('http://localhost:3001/api/diaries', { 
+        date: newDate,
+        weather: newWeather,
+        visibility: newVisibility,
+        comment: newComment
+      });
+      setEntries(entries.concat(response.data));
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        console.log(error);
+        if (!(error.response == null)) {
+          setErrorMessage(error.response.data);
+        }
+        setTimeout(() => {
+          setErrorMessage('');
+        }, 5000);
+      }
+    }
     setNewDate('');
     setNewWeather('');
     setNewVisibility('');
@@ -40,6 +58,7 @@ const App = () => {
   return (
     <div>
       <h2>Add new entry</h2>
+      <p>{errorMessage}</p>
       <form onSubmit={entryCreator}>
         date <input value={newDate} onChange={(event) => setNewDate(event.target.value)}/><br/>
         visibility <input value={newVisibility} onChange={(event) => setNewVisibility(event.target.value)}/><br/>
