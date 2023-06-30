@@ -25,7 +25,12 @@ const addPatient = (patient: NewPatient): Patient => {
     const newPatient = {
         id, entries, ...patient,
     };
-    patients.push(newPatient);
+    const patientwithoutssn = {
+        id, name: patient.name, occupation: patient.occupation,
+        dateOfBirth: patient.dateOfBirth, gender: patient.gender
+    }
+    patients.push(patientwithoutssn as PatientWithoutSsn);
+    patientsfull.push(newPatient as Patient);
     return newPatient;
 };
 
