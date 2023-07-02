@@ -4,15 +4,20 @@ import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
 
-import { Patient } from "../../types";
+import { Patient, Diagnosis } from "../../types";
 
 import patientService from "../../services/patients";
 
 interface Props {
-  codes: String[] | undefined;
+  diagnoses: Diagnosis[]
 }
 
-const PatientPage = () => {
+interface CodeProps {
+  codes: String[] | undefined
+  diagnoses: Diagnosis[]
+}
+
+const PatientPage = ({ diagnoses } : Props) => {
   const [patient, setPatient] = useState<Patient>();
   const id = useParams().id
 
@@ -32,19 +37,20 @@ const PatientPage = () => {
     );
   }
 
-  const DiagnosisCodes = ({ codes } : Props) => {
+  const DiagnosisCodes = ({ codes, diagnoses } : CodeProps) => {
     if (typeof codes == "undefined") {
       return (
         <></>
       )
     } else {
+
       return (
-        <><ul>{codes?.map((c, i) => <li key={i}>{c}</li>)}</ul></>
+        <><ul>{codes?.map((c, i) => <li key={i}>{c} {diagnoses.find(d => d.code === c)?.name}</li>)}</ul></>
       )
     }
   }
 
-  const Entries = () => {
+  const Entries = ({diagnoses} : Props) => {
     const entrylist = patient.entries;
     if (!entrylist || entrylist?.length === 0) {
       return (
@@ -61,7 +67,7 @@ const PatientPage = () => {
             <p>
               {entry.date} <i>{entry.description}</i>
             </p>
-            <DiagnosisCodes codes={entry.diagnosisCodes}/>
+            <DiagnosisCodes codes={entry.diagnosisCodes} diagnoses={diagnoses}/>
           </div>
           ))}
       </>
@@ -74,7 +80,7 @@ const PatientPage = () => {
         <h2>{patient.name} <MaleIcon/></h2>
         <p>ssn: {patient.ssn}<br/>
         occupation: {patient.occupation}</p>
-        <Entries/>
+        <Entries diagnoses={diagnoses}/>
       </div>
     );    
   }
@@ -85,7 +91,7 @@ const PatientPage = () => {
         <h2>{patient.name} <FemaleIcon/></h2>
         <p>ssn: {patient.ssn}<br/>
         occupation: {patient.occupation}</p>
-        <Entries/>
+        <Entries diagnoses={diagnoses}/>
       </div>
     );    
   }
@@ -95,7 +101,7 @@ const PatientPage = () => {
       <h2>{patient.name} <TransgenderIcon/></h2>
       <p>ssn: {patient.ssn}<br/>
       occupation: {patient.occupation}</p>
-      <Entries/>
+      <Entries diagnoses={diagnoses}/>
     </div>
   );
 };
