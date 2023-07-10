@@ -1,19 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams } from 'react-router-dom';
-import FemaleIcon from '@mui/icons-material/Female';
-import MaleIcon from '@mui/icons-material/Male';
-import TransgenderIcon from '@mui/icons-material/Transgender';
-
-import { Patient, Diagnosis } from "../../types";
-
+import { Button } from '@mui/material';
+import { Link } from "react-router-dom";
+import { Patient, Diagnosis, Entry } from "../../types";
 import patientService from "../../services/patients";
+import GenderIcon from './GenderIcon';
+import OccupationalHealthcareEntryDetail from './OccupationalHealthcareEntryDetail';
+import HealthCheckEntryDetail from './HealthCheckEntryDetail';
+import HospitalEntryDetail from './HospitalEntryDetail';
 
 interface Props {
-  diagnoses: Diagnosis[]
-}
-
-interface CodeProps {
-  codes: String[] | undefined
   diagnoses: Diagnosis[]
 }
 
@@ -23,8 +19,12 @@ const PatientPage = ({ diagnoses } : Props) => {
 
   useEffect(() => {
     const fetchPatient = async () => {
-      const patient = await patientService.getOne(id as String) as Patient;
-      setPatient(patient);
+      try {
+        const patient = await patientService.getOne(id as String) as Patient;
+        setPatient(patient);
+      } catch (error) {
+        console.log(error);
+      }
     };
     void fetchPatient();
   }, [id]); 
@@ -37,22 +37,21 @@ const PatientPage = ({ diagnoses } : Props) => {
     );
   }
 
-  const DiagnosisCodes = ({ codes, diagnoses } : CodeProps) => {
-    if (typeof codes == "undefined") {
-      return (
-        <></>
-      )
-    } else {
-
-      return (
-        <><ul>{codes?.map((c, i) => <li key={i}>{c} {diagnoses.find(d => d.code === c)?.name}</li>)}</ul></>
-      )
+  const EntryDetails: React.FC<{ entry: Entry, diagnoses: Diagnosis[] }> = ({ entry, diagnoses }) => {
+    switch(entry.type) {
+      case "Hospital":
+        return <HospitalEntryDetail entry={entry} diagnoses={diagnoses}/>
+      case "HealthCheck":
+        return <HealthCheckEntryDetail entry={entry} diagnoses={diagnoses}/>
+      case "OccupationalHealthcare":
+        return <OccupationalHealthcareEntryDetail entry={entry} diagnoses={diagnoses}/>
+      default:
+        return null;
     }
   }
 
   const Entries = ({diagnoses} : Props) => {
-    const entrylist = patient.entries;
-    if (!entrylist || entrylist?.length === 0) {
+    if (!patient.entries || patient.entries?.length === 0) {
       return (
         <>
           <h3>no entries yet</h3>
@@ -62,46 +61,26 @@ const PatientPage = ({ diagnoses } : Props) => {
     return (
       <>
         <h3>entries</h3>
-        {Object.values(entrylist).map((entry) => (
+        <hr></hr>
+        {patient.entries?.map((entry) => (
           <div key={entry.id}>
-            <p>
-              {entry.date} <i>{entry.description}</i>
-            </p>
-            <DiagnosisCodes codes={entry.diagnosisCodes} diagnoses={diagnoses}/>
+            <EntryDetails entry={entry} diagnoses={diagnoses}/>
+            <hr></hr>
           </div>
           ))}
       </>
     )
   }
 
-  if (patient.gender === "male") {
-    return (
-      <div className="App">
-        <h2>{patient.name} <MaleIcon/></h2>
-        <p>ssn: {patient.ssn}<br/>
-        occupation: {patient.occupation}</p>
-        <Entries diagnoses={diagnoses}/>
-      </div>
-    );    
-  }
-
-  if (patient.gender === "female") {
-    return (
-      <div className="App">
-        <h2>{patient.name} <FemaleIcon/></h2>
-        <p>ssn: {patient.ssn}<br/>
-        occupation: {patient.occupation}</p>
-        <Entries diagnoses={diagnoses}/>
-      </div>
-    );    
-  }
-
   return (
     <div className="App">
-      <h2>{patient.name} <TransgenderIcon/></h2>
+      <h2>{patient.name} {GenderIcon(patient.gender)}</h2>
       <p>ssn: {patient.ssn}<br/>
       occupation: {patient.occupation}</p>
       <Entries diagnoses={diagnoses}/>
+      <Button component={Link} to="/" variant="contained" color="primary">
+      Add new entry
+      </Button>
     </div>
   );
 };
