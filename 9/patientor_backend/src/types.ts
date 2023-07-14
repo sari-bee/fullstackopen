@@ -70,5 +70,5 @@ export interface Patient {
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 
 export type PatientWithoutSsn = UnionOmit<Patient, 'ssn' | 'entries'>;
-
 export type NewPatient = UnionOmit<Patient, 'id' | 'entries'>;
+export type NewEntry = UnionOmit<Entry, 'id'>;

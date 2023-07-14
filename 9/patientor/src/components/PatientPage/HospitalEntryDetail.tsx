@@ -19,9 +19,9 @@ const HospitalEntryDetail: React.FC<{ entry : HospitalEntry, diagnoses: Diagnosi
     <>
       <p>{entry.date} <HospitalIcon/><br/>
       <i>{entry.description}</i><br/>
+      specialist {entry.specialist}</p>
       <DiagnosisCodes codes={entry.diagnosisCodes} diagnoses={diagnoses}/>
       <DischargeDetail entry={entry}/>
-      specialist {entry.specialist}</p>
     </>
   )
 }

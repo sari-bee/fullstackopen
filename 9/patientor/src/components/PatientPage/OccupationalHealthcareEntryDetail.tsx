@@ -19,9 +19,9 @@ const OccupationalHealthcareEntryDetail: React.FC<{ entry : OccupationalHealthca
     <>
       <p>{entry.date} <WorkIcon/> {entry.employerName}<br/>
       <i>{entry.description}</i><br/>
+      specialist {entry.specialist}</p>
       <DiagnosisCodes codes={entry.diagnosisCodes} diagnoses={diagnoses}/>
       <SickLeaveDetail entry={entry}/>
-      specialist {entry.specialist}</p>
     </>
   )
 }

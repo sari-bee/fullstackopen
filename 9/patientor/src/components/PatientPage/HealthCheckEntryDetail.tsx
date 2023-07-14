@@ -23,9 +23,9 @@ const HealthCheckEntryDetail: React.FC<{ entry : HealthCheckEntry, diagnoses: Di
     <>
       <p>{entry.date} <HealthcheckIcon/><br/>
       <i>{entry.description}</i><br/>
-      <HeartIcons entry={entry}/>
-      <DiagnosisCodes codes={entry.diagnosisCodes} diagnoses={diagnoses}/><br/>
       specialist {entry.specialist}</p>
+      <HeartIcons entry={entry}/>
+      <DiagnosisCodes codes={entry.diagnosisCodes} diagnoses={diagnoses}/>
     </>
   )
 }
