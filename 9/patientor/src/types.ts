@@ -69,4 +69,5 @@ export interface Patient {
 type UnionOmit<T, K extends string | number | symbol> = T extends unknown ? Omit<T, K> : never;
 
 export type PatientFormValues = UnionOmit<Patient, "id" | "entries">;
+export type EntryFormValues = UnionOmit<Entry, "id">;
 export type NewEntry = UnionOmit<Entry, 'id'>;
