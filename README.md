@@ -4,3 +4,5 @@ Tämä on [Full Stack Open](https://fullstackopen.com) -kurssin tehtävien palau
 This repository contains my exercise submissions for the [Full Stack Open](https://fullstackopen.com/en/) course.
 
 N.B. Osan 3 tehtäväpalautukset löytyvät [eri repositoriosta](https://github.com/sari-bee/fullstackopen_part3). Part 3 exercise submissions are in a [separate repository](https://github.com/sari-bee/fullstackopen_part3).
+
+[Osa 11/part 11](https://github.com/sari-bee/full-stack-open-pokedex)
